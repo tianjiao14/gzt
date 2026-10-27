@@ -1016,7 +1016,7 @@ button:active {
         <div id="view-training" class="container-box" style="display:none;">
             <div class="dashboard-card" style="background:#EFF6FF; border-left: 4px solid #2563EB;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
-                    <div style="font-size:15px; font-weight:800; color:#1D4ED8;">🏋️ 体育特长生/体训队训练档案</div>
+                    <div style="font-size:15px; font-weight:800; color:#1D4ED8;">🏋️ 体训队训练档案</div>
                     <div style="display:flex; align-items:center; gap:6px;">
                         <span style="font-size:12px; color:#666;">测试周期:</span>
                         <select id="txSemesterSelect" onchange="manualChangeTxSemester(this.value)" style="padding:4px 8px; font-size:13px; font-weight:bold; color:#1D4ED8; border:1px solid #93C5FD;">
@@ -1026,12 +1026,12 @@ button:active {
                 <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                     <input type="date" id="txDatePicker" style="flex:1; min-width:140px; margin:0;" onchange="onTxDateChange()">
                     <button class="btn-blue" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background-color:#2563EB;" onclick="openCreateTeamModal('tx')">➕ 组建新体训队</button>
-                    <button class="btn-blue" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background-color:#0284C7;" onclick="exportTxCurrentMonthExcel()">📋 导出本月测试册</button>
+                    <button class="btn-blue" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background-color:#0284C7;" onclick="exportTxCurrentMonthExcel()">📋 导出本次测试册</button>
                     <button class="btn-green" style="width:auto; padding:8px 12px; margin:0; font-size:13px;" onclick="exportTxStatsToExcel()">🟢 导出历次成绩总表</button>
-                    <button class="btn-purple" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background:#7C3AED;" onclick="exportTxAttendanceDetailExcel()">📅 导出队员训练明细表</button>
+                    <button class="btn-purple" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background:#7C3AED;" onclick="exportTxAttendanceDetailExcel()">📅 导出训练明细表</button>
                 </div>
                 <div style="font-size:11px; color:#64748B; margin-top:6px;">
-                    📌 点选日期锚定归属月份；点击队员姓名可录入当月 100米、立定三级跳、铅球及专项成绩，换算高考100分制总评。
+                    📌 点选日期锚定归属月份；点击队员姓名可录入当月 100米、立定三级跳、铅球及专项成绩。
                 </div>
             </div>
 
@@ -1059,7 +1059,7 @@ button:active {
                     🗄️ 全校体育教学数据中枢
                 </div>
                 <div style="font-size:12px; color:#666; line-height:1.6;">
-                    此处导入的班级花名册、体测与日常成绩、视力健康数据<b>全模块通用</b>，体育课、体训队与报表均直接共享，无需重复导入。
+                    此处导入的班级名单、体测与日常成绩、视力健康数据<b>全模块通用</b>。
                 </div>
             </div>
 
@@ -1069,7 +1069,7 @@ button:active {
 <div class="dashboard-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
     <div>
         <div style="font-size:14px; font-weight:bold; color:#E65100; margin-bottom:6px;">👥 1. 导入/更新班级名单</div>
-        <div style="font-size:12px; color:#666; margin-bottom:12px;">支持学籍 Excel / 班级花名册，自动识别学段与年级编号。</div>
+        <div style="font-size:12px; color:#666; margin-bottom:12px;">支持学籍 Excel / 班级名单，自动识别学段与年级编号。</div>
     </div>
     <div class="file-input-wrapper" onclick="document.getElementById('excelFile').click()">
         <span id="fileStatus">📥 导入班级名册 (Excel)</span>
@@ -1109,14 +1109,14 @@ button:active {
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="btn-blue" style="flex:1; min-width:130px; font-size:13px; margin:0;" onclick="exportGlobalSystemBackup()">
-            💾 导出全系统完整备份
+            💾 导出系统完整备份
         </button>
         <button class="btn-purple" style="flex:1; min-width:130px; font-size:13px; margin:0; background:#673AB7;" onclick="document.getElementById('globalSystemBackupFile').click()">
-            📥 导入全系统完整备份
+            📥 导入系统完整备份
         </button>
         <input type="file" id="globalSystemBackupFile" accept=".json" style="display:none;" onchange="importGlobalSystemBackup(event)">
         <button class="btn-danger-sys" style="flex:1; min-width:130px; font-size:13px; margin:0;" onclick="executeGlobalSystemReset()">
-            🚨 全局初始化 (恢复全新状态)
+            🚨 全局初始化 
         </button>
     </div>
 </div>
@@ -1187,27 +1187,27 @@ button:active {
             <!-- 替换 #view-collect 中的数据维护卡片 -->
 <div class="dashboard-card" style="background: #fafafa; border-style: dashed;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; flex-wrap:wrap; gap:4px;">
-        <span style="font-size: 12px; font-weight: bold; color: #666;">⚙️ 体质健康测试数据维护 (仅限体测范围)</span>
+        <span style="font-size: 12px; font-weight: bold; color: #666;">⚙️ 体质健康测试数据维护</span>
         <span id="archiveStatusBanner" style="font-size: 11px; color: #E65100; font-weight: bold;">📌 当前状态：实时工作区</span>
     </div>
     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-        <button class="btn-green" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px;" onclick="saveCurrentToYearArchive()">🗄️ 保存本次测试成绩</button>
+        <button class="btn-green" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px;" onclick="saveCurrentToYearArchive()">🗄️ 保存本次成绩</button>
         <button class="btn-secondary" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px; background-color:#455A64;" onclick="document.getElementById('importHistoryExcelFile').click()">
-            📥 导入历年历史成绩
+            📥 导入历年成绩
         </button>
         <input type="file" id="importHistoryExcelFile" accept=".xlsx, .xls, .csv" style="display:none;" onchange="importHistoricalYearExcel(event)">
-        <button class="btn-blue" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px;" onclick="openYearArchiveModal()">📅 查看/对比各学期数据</button>
+        <button class="btn-blue" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px;" onclick="openYearArchiveModal()">📅 查看各学期数据</button>
     </div>
     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <!-- 仅体测备份导出 -->
-        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px;" onclick="exportTcModuleBackup()">📥 导出体测备份</button>
+        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px;" onclick="exportTcModuleBackup()">📥 导出备份</button>
         <!-- 仅体测备份导入 -->
-        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px; background-color: #5c6bc0;" onclick="document.getElementById('importTcBackupFile').click()">📤 导入体测备份</button>
+        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px; background-color: #5c6bc0;" onclick="document.getElementById('importTcBackupFile').click()">📤 导入备份</button>
         <input type="file" id="importTcBackupFile" accept=".json" style="display: none;" onchange="importTcModuleBackup(event)">
         <!-- 仅清空体测各项成绩（保留名册与体育课） -->
-        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px; background-color: #FF7043;" onclick="clearTcScoresOnly()">🧹 清空体测成绩</button>
+        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px; background-color: #FF7043;" onclick="clearTcScoresOnly()">🧹 清空成绩</button>
         <!-- 仅体测模块重置（清空体测成绩+体测归档，不碰考勤与其他队伍） -->
-        <button class="btn-danger-sys" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px;" onclick="resetTcModuleOnly()">🚨 体测重置</button>
+        <button class="btn-danger-sys" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px;" onclick="resetTcModuleOnly()">🚨 重置体测</button>
     </div>
 </div>
         </div>
@@ -2132,7 +2132,7 @@ function renderPeAccordion() {
 
     const visibleClasses = getPeVisibleClassNames();
     if (visibleClasses.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#999; padding:30px;">暂无班级显示，请点击上方【⚙️ 筛选我的班级】选择授课班级。</div>`;
+        container.innerHTML = `<div style="text-align:center; color:#999; padding:30px;">暂无班级显示，请点击上方【⚙️ 筛选班级】选择授课班级。</div>`;
         return;
     }
 
