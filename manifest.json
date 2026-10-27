@@ -1,0 +1,15 @@
+{
+  "name": "工作台",
+  "short_name": "工作台",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f6",
+  "theme_color": "#2196F3",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/179/179249.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
