@@ -907,14 +907,14 @@ button:active {
 <div class="app-sidebar" id="appSidebar" style="overflow-y: auto;">
     <div class="sidebar-brand">🏫 智慧体育工作台</div>
     <ul class="sidebar-nav">
-        <!-- 模块 1：体育课 -->
+        <!-- 模块 1：体育课（设为默认 active） -->
         <li class="sidebar-nav-item active" id="nav-btn-pe" onclick="switchSystemModule('pe')">
             <span>🏃</span>体育课
         </li>
 
-        <!-- 模块 2：体质健康测试-->
+        <!-- 模块 2：体质健康测试（移除 active） -->
         <li class="sidebar-nav-item" id="nav-btn-tc-group" onclick="toggleTcSubMenu()">
-            <span>📊</span> 体质健康测试
+            <span>📊</span>体质健康测试
             <span id="tc-arrow" style="margin-left:auto; font-size:10px;">▼</span>
         </li>
         <ul class="sidebar-sub-nav" id="tc-sub-menu" style="display: none;">
@@ -1016,7 +1016,7 @@ button:active {
         <div id="view-training" class="container-box" style="display:none;">
             <div class="dashboard-card" style="background:#EFF6FF; border-left: 4px solid #2563EB;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
-                    <div style="font-size:15px; font-weight:800; color:#1D4ED8;">🏋️ 体训队训练档案</div>
+                    <div style="font-size:15px; font-weight:800; color:#1D4ED8;">🏋️ 体育特长生/体训队训练档案</div>
                     <div style="display:flex; align-items:center; gap:6px;">
                         <span style="font-size:12px; color:#666;">测试周期:</span>
                         <select id="txSemesterSelect" onchange="manualChangeTxSemester(this.value)" style="padding:4px 8px; font-size:13px; font-weight:bold; color:#1D4ED8; border:1px solid #93C5FD;">
@@ -1026,12 +1026,12 @@ button:active {
                 <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                     <input type="date" id="txDatePicker" style="flex:1; min-width:140px; margin:0;" onchange="onTxDateChange()">
                     <button class="btn-blue" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background-color:#2563EB;" onclick="openCreateTeamModal('tx')">➕ 组建新体训队</button>
-                    <button class="btn-blue" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background-color:#0284C7;" onclick="exportTxCurrentMonthExcel()">📋 导出本次测试册</button>
+                    <button class="btn-blue" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background-color:#0284C7;" onclick="exportTxCurrentMonthExcel()">📋 导出本月测试册</button>
                     <button class="btn-green" style="width:auto; padding:8px 12px; margin:0; font-size:13px;" onclick="exportTxStatsToExcel()">🟢 导出历次成绩总表</button>
-                    <button class="btn-purple" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background:#7C3AED;" onclick="exportTxAttendanceDetailExcel()">📅 导出训练明细表</button>
+                    <button class="btn-purple" style="width:auto; padding:8px 12px; margin:0; font-size:13px; background:#7C3AED;" onclick="exportTxAttendanceDetailExcel()">📅 导出队员训练明细表</button>
                 </div>
                 <div style="font-size:11px; color:#64748B; margin-top:6px;">
-                    📌 点选日期锚定归属月份；点击队员姓名可录入当月 100米、立定三级跳、铅球及专项成绩。
+                    📌 点选日期锚定归属月份；点击队员姓名可录入当月 100米、立定三级跳、铅球及专项成绩，换算高考100分制总评。
                 </div>
             </div>
 
@@ -1039,17 +1039,308 @@ button:active {
             <div id="txAccordionContainer"></div>
         </div>
 
-        <!-- 模块 5：智能备课视图 (预留扩展) -->
+        <!-- 模块 5：智能备课视图 (新课标教学设计与德阳标准教案生成) -->
         <div id="view-lesson" class="container-box" style="display:none;">
-            <div class="module-placeholder-box">
-                <div style="font-size:48px; margin-bottom:12px;">📖</div>
-                <h3 style="margin:0 0 8px 0; color:#333;">新课标智能教案与单元备课</h3>
-                <p style="font-size:13px; color:#777; line-height:1.6; margin-bottom:16px;">
-                    对标新课标三维核心素养（运动能力、健康行为、体育品德），支持课时设计一键导出。
-                </p>
-                <span class="module-badge-tag">模块开发中 · 敬请期待</span>
+            <!-- 顶部总览卡片 -->
+            <div class="dashboard-card" style="background:#F0FDF4; border-left: 4px solid #16A34A; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <div style="font-size:16px; font-weight:800; color:#15803D;">📖 新课标智能备课工作台 (德阳标准)</div>
+                        <div style="font-size:12px; color:#64748B; margin-top:2px;">
+                            对标新课标三维核心素养（运动能力、健康行为、体育品德），支持大单元规划与课时计划一键生成及 Word 导出。
+                        </div>
+                    </div>
+                    <div id="lessonCurrentEngineBadge" style="font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#DCFCE7; color:#15803D; border:1px solid #86EFAC;">
+                        ⭐️ 内置专家免密引擎 (免Key·免费秒出)
+                    </div>
+                </div>
             </div>
+
+            <!-- 子导航四段式分段切换器 (课时计划 / 大单元设计 / 备课档案库 / AI配置) -->
+            <div class="tc-sub-tabbar" style="margin-bottom:12px;">
+                <div class="tc-sub-tab-item active" id="lesson-subtab-plan" onclick="switchLessonSubTab('plan')">
+                    <span>📋</span> 课时计划生成
+                </div>
+                <div class="tc-sub-tab-item" id="lesson-subtab-unit" onclick="switchLessonSubTab('unit')">
+                    <span>📚</span> 大单元设计
+                </div>
+                <div class="tc-sub-tab-item" id="lesson-subtab-archive" onclick="switchLessonSubTab('archive')">
+                    <span>🗄️</span> 备课档案库 (<span id="lessonArchiveCountTag">0</span>)
+                </div>
+                <div class="tc-sub-tab-item" id="lesson-subtab-settings" onclick="switchLessonSubTab('settings')">
+                    <span>⚙️</span> AI 引擎设置
+                </div>
+            </div>
+
+            <!-- 子面板 1：课时计划生成 -->
+            <div id="lesson-panel-plan">
+                <!-- 大单元计划联动提示栏 (若存在已保存大单元则展示) -->
+                <div id="lessonUnitLinkBar" style="display:none; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:12px; padding:10px 12px; margin-bottom:12px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+                        <span style="font-size:13px; font-weight:bold; color:#1D4ED8;">🔗 检测到大单元计划！选择课次一键同步：</span>
+                        <select id="lessonUnitLessonSelector" onchange="onSelectUnitLessonInWeb()" style="padding:4px 8px; font-size:12px; border-radius:8px; border:1px solid #93C5FD; font-weight:bold; color:#1E40AF; max-width:280px;">
+                            <option value="">-- 选择大单元课次导入 --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 课时表单卡片 -->
+                <div class="dashboard-card" style="margin-bottom:12px;">
+                    <!-- 快捷项目胶囊 -->
+                    <div style="margin-bottom:10px;">
+                        <div style="font-size:12px; font-weight:bold; color:#475569; margin-bottom:6px;">⚡ 常用项目快速填入：</div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="button" class="proj-chip-btn" style="padding:6px 12px; font-size:12px; border-radius:15px; cursor:pointer;" onclick="quickFillLessonPreset('快速跑')">🏃 蹲踞式起跑</button>
+                            <button type="button" class="proj-chip-btn" style="padding:6px 12px; font-size:12px; border-radius:15px; cursor:pointer;" onclick="quickFillLessonPreset('篮球')">🏀 篮球变向运球</button>
+                            <button type="button" class="proj-chip-btn" style="padding:6px 12px; font-size:12px; border-radius:15px; cursor:pointer;" onclick="quickFillLessonPreset('足球')">⚽ 足球脚内侧传球</button>
+                            <button type="button" class="proj-chip-btn" style="padding:6px 12px; font-size:12px; border-radius:15px; cursor:pointer;" onclick="quickFillLessonPreset('排球')">🏐 排球正面双手垫球</button>
+                            <button type="button" class="proj-chip-btn" style="padding:6px 12px; font-size:12px; border-radius:15px; cursor:pointer;" onclick="quickFillLessonPreset('跳绳')">🪢 跳绳与体能课课练</button>
+                            <button type="button" class="proj-chip-btn" style="padding:6px 12px; font-size:12px; border-radius:15px; cursor:pointer;" onclick="quickFillLessonPreset('体操')">🤸 体操技巧前滚翻</button>
+                        </div>
+                    </div>
+
+                    <!-- 参数输入表单 -->
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:10px;">
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">上课教师:</label>
+                            <input type="text" id="lessonTeacherName" value="文老师" style="width:100%;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">上课时间 / 周次:</label>
+                            <input type="text" id="lessonTeachTime" value="2026年秋季 / 第5周" style="width:100%;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">课题名称:</label>
+                            <input type="text" id="lessonTopicName" value="田径：起跑技术与加速跑" style="width:100%;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">课次:</label>
+                            <input type="text" id="lessonSeq" value="第 2 次课 / 共 6 次课" style="width:100%;">
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:10px;">
+    <div>
+        <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">课型阶段定位:</label>
+        <select id="lessonStage" style="width:100%;">
+            <option value="新授课">新授课（初步建立动作表象/分解示范/慢速学练）</option>
+            <option value="巩固课" selected>巩固课（动作动力定型/提高熟练度/纠正错误）</option>
+            <option value="提高课">提高课（对抗情境运用/组合衔接/技战术拓展）</option>
+            <option value="考核/实战赛课">考核/实战赛课（实战达标/教学比赛/规则评测）</option>
+        </select>
+    </div>
+    <div>
+        <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">适用水平 / 学段:</label>
+        <select id="lessonLevelSelect" onchange="onLessonLevelChange()" style="width:100%; font-weight:bold; color:#1D4ED8;">
+            <option value="水平一">水平一（小学1-2年级 · 基础身体活动与情境游戏）</option>
+            <option value="水平二">水平二（小学3-4年级 · 单一技能向组合技能过渡）</option>
+            <option value="水平三">水平三（小学5-6年级 · 结构化技能与基础对抗）</option>
+            <option value="水平四" selected>水平四（初中7-9年级 · 完整技战术与实战比赛）</option>
+            <option value="水平五">水平五（高中1-3年级 · 专项竞技与终身体育）</option>
+        </select>
+    </div>
+    <div>
+        <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">班级 (可选择已有名册或输入):</label>
+        <input type="text" id="lessonClassGrade" list="lessonClassDataList" value="八年级 1 班" oninput="onLessonClassGradeInput()" style="width:100%;">
+        <datalist id="lessonClassDataList"></datalist>
+    </div>
+    <div>
+        <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">人数:</label>
+        <input type="text" id="lessonStudentCount" value="40 人" style="width:100%;">
+    </div>
+    <div>
+        <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">课时时长:</label>
+        <select id="lessonDuration" style="width:100%;">
+            <option value="40" selected>40 分钟 (中小学标准)</option>
+            <option value="45">45 分钟 (高中标准)</option>
+        </select>
+    </div>
+</div>
+
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">场地器材预设:</label>
+                        <input type="text" id="lessonVenueEquip" value="标准跑道、标志桶8个、标志碟40个、发令笛1个、秒表2块、音响1台" style="width:100%;">
+                    </div>
+
+                    <div style="margin-bottom:12px;">
+                        <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">特别设计要求 / 专项说明 (选填):</label>
+                        <textarea id="lessonSpecialReq" rows="2" style="width:100%; font-size:13px; padding:8px 10px; border-radius:10px; border:1.5px solid transparent; background:#F5F7FA;" placeholder="例如：强调低重心平稳加速；加入下肢爆发力与核心力量课课练；设置小组4x30米迎面接力比赛。"></textarea>
+                    </div>
+
+                    <!-- 生成操作按钮 -->
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn-green" style="flex:2; min-width:180px; font-size:15px; margin:0;" onclick="executeGenerateLessonPlan()">
+                            🚀 一键生成德阳市标准课时计划 (教案)
+                        </button>
+                        <button class="btn-blue" style="flex:1; min-width:140px; font-size:13px; margin:0; background:#0284C7;" onclick="switchLessonSubTab('settings')">
+                            ⚙️ 切换AI模型/免密设置
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 生成结果展示与导出区 -->
+                <div id="lessonPlanResultArea" style="display:none;">
+                    <div class="dashboard-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; background:#FAFAFA;">
+                        <div style="font-size:14px; font-weight:bold; color:#15803D;">
+                            🎉 教案生成完成 (已自动保存至档案库)
+                        </div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <button class="btn-green" style="font-size:13px; padding:7px 14px; margin:0;" onclick="exportLessonPlanDocx()">
+                                📥 导出德阳标准教案 Word 文档 (.doc)
+                            </button>
+                            <button class="btn-blue" style="font-size:13px; padding:7px 12px; margin:0; background:#2563EB;" onclick="printLessonPlanTable()">
+                                🖨️ 打印教案
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 德阳市 7 列标准表格预览容器 -->
+                    <div id="lessonPlanTableWrapper" style="overflow-x:auto; margin-bottom:14px;"></div>
+                </div>
+            </div>
+
+            <!-- 子面板 2：大单元教学设计 -->
+            <div id="lesson-panel-unit" style="display:none;">
+                <div class="dashboard-card" style="margin-bottom:12px;">
+                    <div style="font-size:15px; font-weight:bold; color:#15803D; margin-bottom:6px;">🏃 体育与健康大单元整体教学设计</div>
+                    <div style="font-size:12px; color:#666; margin-bottom:12px;">
+                        依据《义务教育体育与健康课程标准（2022年版）》“学练赛评”一体化大单元理念，生成后自动保存并可一键将课时导入到课时教案中！
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; margin-bottom:10px;">
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">大单元项目 / 主题:</label>
+                            <input type="text" id="unitProjectTitle" value="田径：快速跑与接力跑技能拓展" style="width:100%;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">适用学段与年级:</label>
+                            <select id="unitGradeSelect" style="width:100%;">
+                                <option value="七年级 (水平四)">七年级 (水平四)</option>
+                                <option value="八年级 (水平四)" selected>八年级 (水平四)</option>
+                                <option value="九年级 (水平四)">九年级 (水平四)</option>
+                                <option value="高一 (水平五)">高一 (水平五)</option>
+                                <option value="高二 (水平五)">高二 (水平五)</option>
+                                <option value="高三 (水平五)">高三 (水平五)</option>
+                                <option value="小学 5-6 年级 (水平三)">小学 5-6 年级 (水平三)</option>
+                                <option value="小学 3-4 年级 (水平二)">小学 3-4 年级 (水平二)</option>
+                                <option value="小学 1-2 年级 (水平一)">小学 1-2 年级 (水平一)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">大单元总课时数:</label>
+                            <input type="number" id="unitTotalHours" value="6" min="3" max="36" style="width:100%;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom:12px;">
+                        <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">大单元设计理念 / 特色要求 (选填):</label>
+                        <textarea id="unitConceptReq" rows="2" style="width:100%; font-size:13px; padding:8px 10px; border-radius:10px; border:1.5px solid transparent; background:#F5F7FA;" placeholder="例如：以发展速度与灵敏素质为主线，由单人起跑反应、途中跑加速递进到迎面接力与下压式传接棒配合，包含课课练专项体能素质补偿。"></textarea>
+                    </div>
+
+                    <button class="btn-green" style="width:100%; font-size:15px; margin:0;" onclick="executeGenerateUnitPlan()">
+                        🚀 一键生成大单元教学计划并自动保存
+                    </button>
+                </div>
+
+                <!-- 大单元生成结果展示区 -->
+                <div id="unitPlanResultArea" style="display:none;">
+                    <div class="dashboard-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                            <div style="font-size:16px; font-weight:800; color:#1D4ED8;" id="unitResultTitle"></div>
+                            <button class="btn-green" style="font-size:13px; padding:6px 14px; margin:0;" onclick="exportUnitPlanDocx()">
+                                📥 导出大单元计划 Word 文档 (.doc)
+                            </button>
+                        </div>
+
+                        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:12px; margin-bottom:12px;">
+                            <div style="font-size:13px; font-weight:bold; color:#1E40AF; margin-bottom:4px;">💡 大单元设计理念与学情定位：</div>
+                            <div id="unitResultConcept" style="font-size:13px; color:#334155; line-height:1.6; margin-bottom:10px;"></div>
+
+                            <div style="font-size:13px; font-weight:bold; color:#1E40AF; margin-bottom:4px;">🎯 大单元三维教学目标：</div>
+                            <div id="unitResultGoals" style="font-size:13px; color:#334155; line-height:1.6; margin-bottom:10px; white-space:pre-line;"></div>
+
+                            <div style="font-size:13px; font-weight:bold; color:#1E40AF; margin-bottom:4px;">📊 考核评价要点：</div>
+                            <div id="unitResultEvaluation" style="font-size:13px; color:#334155; line-height:1.6; white-space:pre-line;"></div>
+                        </div>
+
+                        <div style="font-size:14px; font-weight:bold; color:#334155; margin-bottom:8px;">
+                            📅 课时分步推进表 (点击任意课时卡片可直接导入并生成课时教案)：
+                        </div>
+                        <div id="unitLessonsGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 子面板 3：备课档案库 -->
+            <div id="lesson-panel-archive" style="display:none;">
+                <div class="dashboard-card" style="margin-bottom:12px;">
+                    <div style="font-size:15px; font-weight:bold; color:#1E40AF; margin-bottom:4px;">📚 已保存的课时教案档案</div>
+                    <div style="font-size:12px; color:#666; margin-bottom:10px;">所有生成的教案均在本地持久化安全保存，随时调出复用与导出 Word。</div>
+                    <div id="lessonArchiveLessonList"></div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div style="font-size:15px; font-weight:bold; color:#7E22CE; margin-bottom:4px;">📖 已保存的大单元教学计划档案</div>
+                    <div style="font-size:12px; color:#666; margin-bottom:10px;">点击“调阅计划”可同步查看全部课时架构并联动备课。</div>
+                    <div id="lessonArchiveUnitList"></div>
+                </div>
+            </div>
+
+            <!-- 子面板 4：AI 引擎设置 -->
+            <div id="lesson-panel-settings" style="display:none;">
+                <div class="dashboard-card" style="margin-bottom:12px;">
+                    <div style="font-size:15px; font-weight:800; color:#15803D; margin-bottom:6px;">⚙️ AI 备课引擎与免密服务配置</div>
+                    
+                    <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:12px; color:#166534; line-height:1.6;">
+                        💡 <b>备课引擎与免费额度指南：</b><br>
+                        • <b>⭐️ 内置新课标专家知识库</b>：默认启用，涵盖田径/球类/体操武术/跳绳体能，100%免Key，离线秒出标准详案。<br>
+                        • <b>⚡ 智谱 AI (GLM-4-Flash)</b>：【免费推荐】官方对个人开发者<b>永久免费·不限额度</b>，申请 Key 填入即可终身免费稳定使用。<br>
+                        • <b>🚀 硅基流动 SiliconFlow</b>：【高质量免费】注册即赠送大量 Token，免充值调用 <b>DeepSeek-V3 / R1 (满血版)</b> 与千问模型。<br>
+                        • <b>🤖 DeepSeek 官方 / 🌊 豆包</b>：国内最强中文体育教研表现，逻辑深入，官方 API 极高性价比。<br>
+                        • <b>🌐 OpenAI (GPT-4o) / 💎 Google Gemini</b>：国际顶尖通用大模型，支持标准兼容接口。
+                    </div>
+
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:13px; font-weight:bold; color:#333; display:block; margin-bottom:4px;">选择备课引擎服务商:</label>
+                        <select id="lessonProviderSelect" onchange="onLessonProviderChange()" style="width:100%; font-size:14px; font-weight:bold;">
+                            <option value="builtin" selected>⭐️ 内置新课标专家知识库引擎（强烈推荐·开箱即用·100%免Key）</option>
+                            <option value="zhipu">⚡ 智谱 AI (GLM-4-Flash 官方永久免费通道·免充值)</option>
+                            <option value="siliconflow">🚀 硅基流动 SiliconFlow (赠送免费额度·支持DeepSeek-V3/R1及千问)</option>
+                            <option value="deepseek">🤖 DeepSeek 官方 API (deepseek-chat / deepseek-reasoner)</option>
+                            <option value="doubao">🌊 字节跳动·豆包 API (火山引擎 Ark API)</option>
+                            <option value="openai">🌐 OpenAI 官方 API (GPT-4o / GPT-4o-mini)</option>
+                            <option value="gemini">💎 Google Gemini 官方 API (Gemini 1.5 Pro / Flash)</option>
+                            <option value="ollama">💻 本地 Ollama (完全离线免Key)</option>
+                            <option value="custom">⚙️ 自定义兼容 OpenAI 协议接口</option>
+                        </select>
+                    </div>
+
+                    <div id="lessonCustomApiConfigArea" style="display:none; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:12px; margin-bottom:12px;">
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">API 接口地址 (Base URL):</label>
+                            <input type="text" id="lessonApiBaseUrl" placeholder="如: https://api.deepseek.com" style="width:100%; font-size:13px;">
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">API Key (密钥，输入一次自动记住):</label>
+                            <input type="password" id="lessonApiKey" placeholder="sk-..." style="width:100%; font-size:13px;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:bold; color:#475569; display:block; margin-bottom:3px;">模型名称 (Model):</label>
+                            <input type="text" id="lessonApiModelName" placeholder="如: deepseek-chat 或 ep-xxxx" style="width:100%; font-size:13px;">
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-green" style="flex:2; font-size:14px; margin:0;" onclick="saveLessonAiSettings()">💾 保存引擎设置</button>
+                        <button class="btn-secondary" style="flex:1; font-size:14px; margin:0;" onclick="resetLessonAiSettings()">🔄 恢复默认 (内置免密)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 隐藏的离线心率图绘制 Canvas -->
+            <canvas id="lessonHeartRateCanvas" width="650" height="220" style="display:none;"></canvas>
         </div>
+
 
         <!-- 模块 6：全校统一数据管理（底层通用数据中枢） -->
         <div id="view-datamgmt" class="container-box" style="display:none;">
@@ -1059,7 +1350,7 @@ button:active {
                     🗄️ 全校体育教学数据中枢
                 </div>
                 <div style="font-size:12px; color:#666; line-height:1.6;">
-                    此处导入的班级名单、体测与日常成绩、视力健康数据<b>全模块通用</b>。
+                    此处导入的班级花名册、体测与日常成绩、视力健康数据<b>全模块通用</b>，体育课、体训队与报表均直接共享，无需重复导入。
                 </div>
             </div>
 
@@ -1069,7 +1360,7 @@ button:active {
 <div class="dashboard-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
     <div>
         <div style="font-size:14px; font-weight:bold; color:#E65100; margin-bottom:6px;">👥 1. 导入/更新班级名单</div>
-        <div style="font-size:12px; color:#666; margin-bottom:12px;">支持学籍 Excel / 班级名单，自动识别学段与年级编号。</div>
+        <div style="font-size:12px; color:#666; margin-bottom:12px;">支持学籍 Excel / 班级花名册，自动识别学段与年级编号。</div>
     </div>
     <div class="file-input-wrapper" onclick="document.getElementById('excelFile').click()">
         <span id="fileStatus">📥 导入班级名册 (Excel)</span>
@@ -1109,14 +1400,14 @@ button:active {
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="btn-blue" style="flex:1; min-width:130px; font-size:13px; margin:0;" onclick="exportGlobalSystemBackup()">
-            💾 导出系统完整备份
+            💾 导出全系统完整备份
         </button>
         <button class="btn-purple" style="flex:1; min-width:130px; font-size:13px; margin:0; background:#673AB7;" onclick="document.getElementById('globalSystemBackupFile').click()">
-            📥 导入系统完整备份
+            📥 导入全系统完整备份
         </button>
         <input type="file" id="globalSystemBackupFile" accept=".json" style="display:none;" onchange="importGlobalSystemBackup(event)">
         <button class="btn-danger-sys" style="flex:1; min-width:130px; font-size:13px; margin:0;" onclick="executeGlobalSystemReset()">
-            🚨 全局初始化 
+            🚨 全局初始化 (恢复全新状态)
         </button>
     </div>
 </div>
@@ -1187,27 +1478,27 @@ button:active {
             <!-- 替换 #view-collect 中的数据维护卡片 -->
 <div class="dashboard-card" style="background: #fafafa; border-style: dashed;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; flex-wrap:wrap; gap:4px;">
-        <span style="font-size: 12px; font-weight: bold; color: #666;">⚙️ 体质健康测试数据维护</span>
+        <span style="font-size: 12px; font-weight: bold; color: #666;">⚙️ 体质健康测试数据维护 (仅限体测范围)</span>
         <span id="archiveStatusBanner" style="font-size: 11px; color: #E65100; font-weight: bold;">📌 当前状态：实时工作区</span>
     </div>
     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-        <button class="btn-green" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px;" onclick="saveCurrentToYearArchive()">🗄️ 保存本次成绩</button>
+        <button class="btn-green" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px;" onclick="saveCurrentToYearArchive()">🗄️ 保存本次测试成绩</button>
         <button class="btn-secondary" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px; background-color:#455A64;" onclick="document.getElementById('importHistoryExcelFile').click()">
-            📥 导入历年成绩
+            📥 导入历年历史成绩
         </button>
         <input type="file" id="importHistoryExcelFile" accept=".xlsx, .xls, .csv" style="display:none;" onchange="importHistoricalYearExcel(event)">
-        <button class="btn-blue" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px;" onclick="openYearArchiveModal()">📅 查看各学期数据</button>
+        <button class="btn-blue" style="flex:1; min-width:110px; padding:7px 8px; font-size:12px;" onclick="openYearArchiveModal()">📅 查看/对比各学期数据</button>
     </div>
     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <!-- 仅体测备份导出 -->
-        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px;" onclick="exportTcModuleBackup()">📥 导出备份</button>
+        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px;" onclick="exportTcModuleBackup()">📥 导出体测备份</button>
         <!-- 仅体测备份导入 -->
-        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px; background-color: #5c6bc0;" onclick="document.getElementById('importTcBackupFile').click()">📤 导入备份</button>
+        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px; background-color: #5c6bc0;" onclick="document.getElementById('importTcBackupFile').click()">📤 导入体测备份</button>
         <input type="file" id="importTcBackupFile" accept=".json" style="display: none;" onchange="importTcModuleBackup(event)">
         <!-- 仅清空体测各项成绩（保留名册与体育课） -->
-        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px; background-color: #FF7043;" onclick="clearTcScoresOnly()">🧹 清空成绩</button>
+        <button class="btn-secondary" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px; background-color: #FF7043;" onclick="clearTcScoresOnly()">🧹 清空体测成绩</button>
         <!-- 仅体测模块重置（清空体测成绩+体测归档，不碰考勤与其他队伍） -->
-        <button class="btn-danger-sys" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px;" onclick="resetTcModuleOnly()">🚨 重置体测</button>
+        <button class="btn-danger-sys" style="flex:1; min-width:80px; padding:6px 8px; font-size:12px;" onclick="resetTcModuleOnly()">🚨 体测重置</button>
     </div>
 </div>
         </div>
@@ -1495,15 +1786,21 @@ button:active {
 </div>
 <!-- 智能数据校验结果交互弹窗 -->
 <div class="modal-overlay" id="smartCheckModal" onclick="if(event.target.id==='smartCheckModal') this.style.display='none'">
-    <div class="modal-content" style="max-width: 500px;" onclick="event.stopPropagation()">
+    <div class="modal-content" style="max-width: 620px;" onclick="event.stopPropagation()">
         <span class="close-modal" onclick="document.getElementById('smartCheckModal').style.display='none'">&times;</span>
-        <h3 style="margin-top:0; color:#EF6C00; text-align:center;">🔍 智能数据校验报告</h3>
-        <div id="smartCheckSummaryBanner" style="background:#FFF3E0; border-radius:10px; padding:10px; font-size:12px; color:#BF360C; margin-bottom:12px; line-height:1.6;"></div>
+        <h3 style="margin-top:0; color:#E65100; text-align:center;">🔍 国家体测数据·智能深度质检报告</h3>
         
-        <div style="font-size:12px; font-weight:bold; color:#555; margin-bottom:6px;">
-            ⚠️ 异常清单（点击右侧按钮直接跳转修改）：
-        </div>
-        <div id="smartCheckErrorListContainer" style="max-height:55vh; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
+        <!-- 统计面板 -->
+        <div id="smartCheckSummaryBanner" style="margin-bottom:10px;"></div>
+        
+        <!-- 快捷一键修复工具栏 -->
+        <div id="smartCheckQuickToolbar" style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;"></div>
+
+        <!-- 分类筛选分段栏 -->
+        <div id="smartCheckTabsWrap" style="display:flex; gap:6px; margin-bottom:10px; overflow-x:auto;"></div>
+
+        <!-- 异常卡片列表容器 -->
+        <div id="smartCheckErrorListContainer" style="max-height:48vh; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 </div>
 <!-- 测试环境信息配置弹窗 -->
@@ -1558,6 +1855,14 @@ button:active {
         <span class="tab-icon">🏃</span>
         <span>体育课</span>
     </div>
+    <div class="tabbar-item" id="tab-btn-lesson" onclick="switchBottomTab('lesson')">
+        <span class="tab-icon">📖</span>
+        <span>备课</span>
+    </div>
+    <div class="tabbar-item" id="tab-btn-tc" onclick="switchBottomTab('tc')">
+        <span class="tab-icon">📊</span>
+        <span>体测</span>
+    </div>
     <div class="tabbar-item" id="tab-btn-training" onclick="switchBottomTab('training')">
         <span class="tab-icon">🏋️</span>
         <span>体训队</span>
@@ -1565,10 +1870,6 @@ button:active {
     <div class="tabbar-item" id="tab-btn-varsity" onclick="switchBottomTab('varsity')">
         <span class="tab-icon">🏅</span>
         <span>代表队</span>
-    </div>
-    <div class="tabbar-item" id="tab-btn-tc" onclick="switchBottomTab('tc')">
-        <span class="tab-icon">📊</span>
-        <span>体测</span>
     </div>
     <div class="tabbar-item" id="tab-btn-datamgmt" onclick="switchBottomTab('datamgmt')">
         <span class="tab-icon">🗄️</span>
@@ -1834,7 +2135,8 @@ function switchSystemModule(modKey) {
     } else if (modKey === 'lesson') {
         document.getElementById('nav-btn-lesson').classList.add('active');
         document.getElementById('view-lesson').style.display = 'block';
-        if (titleEl) titleEl.innerText = '📖 智能备课';
+        if (titleEl) titleEl.innerText = '📖 智能备课 (新课标教学设计)';
+        initLessonModuleWorkspace();
     } else if (modKey === 'datamgmt') {
         document.getElementById('nav-btn-datamgmt').classList.add('active');
         document.getElementById('view-datamgmt').style.display = 'block';
@@ -1843,7 +2145,7 @@ function switchSystemModule(modKey) {
         renderRosterManageTable();
     }
 // 联动同步移动端底部高亮
-  if (['pe', 'training', 'varsity', 'datamgmt'].includes(modKey)) {
+  if (['pe', 'lesson', 'training', 'varsity', 'datamgmt'].includes(modKey)) {
         updateBottomTabBarActive(modKey);
     } else {
         updateBottomTabBarActive('');
@@ -1863,7 +2165,7 @@ function switchBottomTab(target) {
 
 // 同步刷新底部 TabBar 5 个按钮的高亮状态
 function updateBottomTabBarActive(activeKey) {
-    const tabs = ['pe', 'training', 'varsity', 'tc', 'datamgmt'];
+    const tabs = ['pe', 'lesson', 'training', 'varsity', 'tc', 'datamgmt'];
     tabs.forEach(key => {
         const btn = document.getElementById(`tab-btn-${key}`);
         if (btn) btn.classList.remove('active');
@@ -2132,7 +2434,7 @@ function renderPeAccordion() {
 
     const visibleClasses = getPeVisibleClassNames();
     if (visibleClasses.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:#999; padding:30px;">暂无班级显示，请点击上方【⚙️ 筛选班级】选择授课班级。</div>`;
+        container.innerHTML = `<div style="text-align:center; color:#999; padding:30px;">暂无班级显示，请点击上方【⚙️ 筛选我的班级】选择授课班级。</div>`;
         return;
     }
 
@@ -6424,59 +6726,73 @@ function renderGradeItemExcellenceTable() {
         return NATION_MAP[s] || '1';
     }
 
-    // 1. 升级版智能校验：支持结构化记录异常并弹出可点击的列表
+    // ================= 智能数据质量质检与全项校验引擎 =================
+let currentSmartCheckErrors = [];
+let currentSmartCheckFilter = 'all';
+
 function runSmartCheckOnReport() {
     let classList = Object.keys(students);
     if (classList.length === 0) { 
-        alert('暂无体测数据！'); 
+        alert('暂无体测数据！请先导入名册或录入成绩。'); 
         return; 
     }
 
     let cleanedUnitsCount = 0;
     let autoFixedDotsCount = 0;
-    let warningItems = []; // 存放结构化错误对象
+    let autoFixedMetersCount = 0;
+    let autoFixedDecimalsCount = 0;
+    let warningItems = [];
 
     classList.forEach(cls => {
         const rawG = normalizeGrade(cls);
         const isPrimary = rawG.includes('年级') || cls.includes('小');
+        const stuList = students[cls] || [];
 
-        students[cls].forEach(s => {
+        stuList.forEach(s => {
             const sc = s.scores || {};
             const isMale = (s.gender === '男' || s.gender === '1');
 
-            // 1. 基础符号清洗与格式规整
-            ['身高', '体重', '肺活量', '50米', '立定跳远', '坐位体前屈', '仰卧起坐', '引体向上', '1000米', '800米', '50米x8往返跑', '一分钟跳绳'].forEach(k => {
+            // 1. 深度清洗符号杂质与常见单位
+            const allProjKeys = ['身高', '体重', '肺活量', '50米', '立定跳远', '坐位体前屈', '仰卧起坐', '引体向上', '1000米', '800米', '50米x8往返跑', '一分钟跳绳'];
+            allProjKeys.forEach(k => {
                 let actualK = sc[k] !== undefined ? k : (k === '一分钟跳绳' && sc['跳绳'] !== undefined ? '跳绳' : null);
                 if (actualK && sc[actualK] !== undefined && sc[actualK] !== null) {
                     let original = String(sc[actualK]).trim();
                     let cleaned = original;
 
+                    // 清理无效占位符
+                    if (['-', '--', '/', '无', '未测', '#N/A', '#VALUE!', 'null', 'undefined'].includes(cleaned.toUpperCase())) {
+                        delete sc[actualK];
+                        cleanedUnitsCount++;
+                        return;
+                    }
+
+                    // 清理常见单位与中英文符号
+                    cleaned = cleaned.replace(/['"”’‘′″：:，,]/g, '.');
+                    cleaned = cleaned.replace(/(cm|kg|ml|m|秒|次|分|厘米|公斤|毫升)/gi, '').trim();
+                    cleaned = cleaned.replace(/\.+$/g, '').trim();
+
+                    // 时间项目特殊格式清洗（如 345 -> 3.45）
                     if (actualK === '1000米' || actualK === '800米' || actualK === '50米x8往返跑') {
-                        // 1. 如果是 3~4 位无小数点整数（如 204、152），修复为 2.04、1.52
-                        if (/^\d{3,4}$/.test(original)) {
-                            let sec = parseInt(original.slice(-2), 10);
-                            let min = parseInt(original.slice(0, -2), 10);
+                        if (/^\d{3,4}$/.test(cleaned)) {
+                            let sec = parseInt(cleaned.slice(-2), 10);
+                            let min = parseInt(cleaned.slice(0, -2), 10);
                             if (sec < 60 && min < 15) {
                                 cleaned = `${min}.${String(sec).padStart(2, '0')}`;
                                 autoFixedDotsCount++;
                             }
-                        } else {
-                            // 2. 如果包含小数点或本身是纯秒数
-                            let totalSec = parseTime(original);
-                            if (totalSec > 0) {
-                                if (totalSec < 60) {
-                                    // 核心修复：小于60秒时保持秒数原样（如 58、59.45），绝不转成 0.58！
-                                    cleaned = original;
-                                } else {
-                                    // 满 60 秒以上才规范化为 M.SS 格式
-                                    let m = Math.floor(totalSec / 60);
-                                    let sRemain = Math.round(totalSec % 60);
-                                    cleaned = `${m}.${String(sRemain).padStart(2, '0')}`;
-                                }
+                        }
+                    }
+
+                    // 计数类项目小数自动四舍五入取整
+                    if (['仰卧起坐', '引体向上', '一分钟跳绳'].includes(actualK)) {
+                        if (cleaned.includes('.')) {
+                            let rounded = Math.round(parseFloat(cleaned));
+                            if (!isNaN(rounded)) {
+                                cleaned = String(rounded);
+                                autoFixedDecimalsCount++;
                             }
                         }
-                    }else {
-                        cleaned = original.replace(/['"”’‘：:，,]/g, '.').replace(/[^\d.-]/g, '').replace(/\.+$/g, '');
                     }
 
                     if (cleaned !== original) {
@@ -6486,95 +6802,215 @@ function runSmartCheckOnReport() {
                 }
             });
 
-            // 辅助登记异常函数
-            const addWarn = (proj, val, msg) => {
+            // 辅助登记函数
+            const addWarn = (proj, val, msg, type = 'warning', targetProj = '') => {
                 warningItems.push({
                     className: cls,
                     studentName: s.name,
                     gender: s.gender,
                     project: proj,
+                    targetProject: targetProj || proj,
                     value: val,
-                    message: msg
+                    message: msg,
+                    type: type // 'danger' | 'warning' | 'missing'
                 });
             };
 
-            // 2. 详细异常检测
-            // 身高
+            // 2. 身高自动单位换算与范围核验
             if (sc['身高']) {
                 let h = parseFloat(sc['身高']);
-                if (h > 0 && h < 3) { sc['身高'] = (h * 100).toFixed(1); cleanedUnitsCount++; }
-                else if (h < 90 || h > 215) addWarn('身高', sc['身高'], `数值为 ${h}cm，超出常规范围 (90~215)`);
+                if (h >= 0.8 && h <= 2.4) {
+                    sc['身高'] = (h * 100).toFixed(1);
+                    autoFixedMetersCount++;
+                } else if (h >= 10.0 && h <= 25.0) {
+                    sc['身高'] = (h * 10).toFixed(1);
+                    autoFixedMetersCount++;
+                } else if (h < 0) {
+                    addWarn('身高', sc['身高'], '录入了负数值，请重新核实！', 'danger', '身高');
+                } else if (h < 95 || h > 215) {
+                    addWarn('身高', sc['身高'], `数值为 ${sc['身高']}cm，超出常规范围 (95~215cm)`, 'warning', '身高');
+                }
             }
-            // 体重
+
+            // 3. 体重范围与负数核验
             if (sc['体重']) {
                 let w = parseFloat(sc['体重']);
-                if (w < 15 || w > 140) addWarn('体重', sc['体重'], `数值为 ${w}kg，超出常规范围 (15~140)`);
-            }
-            
-            if (sc['立定跳远']) {
-                    let j = parseFloat(sc['立定跳远']);
-                    if (j > 0 && j < 4) { sc['立定跳远'] = Math.round(j * 100); cleanedUnitsCount++; }
+                if (w < 0) {
+                    addWarn('体重', sc['体重'], '录入了负数值，请重新核实！', 'danger', '体重');
+                } else if (w < 15 || w > 145) {
+                    addWarn('体重', sc['体重'], `数值为 ${sc['体重']}kg，超出常规范围 (15~145kg)`, 'warning', '体重');
                 }
+            }
 
-            // 肺活量
+            // 4. BMI 极端值与录反核验
+            if (sc['身高'] && sc['体重']) {
+                let h = parseFloat(sc['身高']), w = parseFloat(sc['体重']);
+                if (h > 0 && w > 0) {
+                    let hM = h > 3 ? h / 100 : h;
+                    let bmi = w / (hM * hM);
+                    if (bmi < 10.5 || bmi > 38.0) {
+                        addWarn('BMI', `BMI:${bmi.toFixed(1)}`, `身高${h}cm / 体重${w}kg，BMI极端异常 (${bmi.toFixed(1)})，疑似身高与体重录反或输入失误`, 'warning', '身高');
+                    }
+                }
+            }
+
+            // 5. 立定跳远
+            if (sc['立定跳远']) {
+                let j = parseFloat(sc['立定跳远']);
+                if (j >= 0.6 && j <= 3.5) {
+                    sc['立定跳远'] = String(Math.round(j * 100));
+                    autoFixedMetersCount++;
+                } else if (j >= 15 && j <= 35) {
+                    sc['立定跳远'] = String(Math.round(j * 10));
+                    autoFixedMetersCount++;
+                } else if (j < 0) {
+                    addWarn('立定跳远', sc['立定跳远'], '录入了负数值，请重新核实！', 'danger', '立定跳远');
+                } else if (j < 60 || j > 325) {
+                    addWarn('立定跳远', sc['立定跳远'], `数值为 ${sc['立定跳远']}cm，超出常规标准 (60~325cm，若过小确认是否少输0)`, 'warning', '立定跳远');
+                }
+            }
+
+            // 6. 坐位体前屈
+            if (sc['坐位体前屈'] !== undefined && sc['坐位体前屈'] !== null && String(sc['坐位体前屈']).trim() !== '') {
+                let sit = parseFloat(sc['坐位体前屈']);
+                if (sit >= 50 && sit <= 350) {
+                    addWarn('坐位体前屈', sc['坐位体前屈'], `数值为 "${sc['坐位体前屈']}"，疑似仪器毫米单位 (如180代表18.0cm)，点击上方按钮可一键÷10`, 'warning', '坐位体前屈');
+                } else if (sit < -20 || sit > 36) {
+                    addWarn('坐位体前屈', sc['坐位体前屈'], `数值为 ${sc['坐位体前屈']}cm，超出常规仪器测量范围 (-20~+35cm)`, 'warning', '坐位体前屈');
+                }
+            }
+
+            // 7. 肺活量
             let lungVal = sc['肺活量'];
             if (lungVal !== undefined && lungVal !== null && String(lungVal).trim() !== '') {
                 let numL = parseFloat(lungVal);
-                if (numL < 500 || numL > 7500) {
-                    addWarn('肺活量', lungVal, `数值为 ${lungVal}ml，超出正常范围 (500~7500)`);
-                }
-            }
-           
-            // 仰卧起坐
-            let situpVal = sc['仰卧起坐'] || sc['仰卧'];
-            if (situpVal !== undefined && situpVal !== null && String(situpVal).trim() !== '') {
-                let strVal = String(situpVal).trim();
-                let numVal = parseFloat(strVal);
-                if (strVal.includes('.')) {
-                    addWarn('仰卧起坐', strVal, `录入了小数 "${strVal}" 次，次数必须为整数`);
-                } else if (numVal > 95) {
-                    addWarn('仰卧起坐', strVal, `录入了 "${strVal}" 次，疑似多输了一位`);
+                if (numL < 0) {
+                    addWarn('肺活量', lungVal, '录入了负数值，请重新核实！', 'danger', '肺活量');
+                } else if (numL < 600) {
+                    addWarn('肺活量', lungVal, `数值为 ${lungVal}ml，极度偏低，疑似少输一位0 (如350可能是3500)`, 'warning', '肺活量');
+                } else if (numL > 7500) {
+                    addWarn('肺活量', lungVal, `数值为 ${lungVal}ml，超出正常人体生理极限 (500~7500ml)`, 'warning', '肺活量');
                 }
             }
 
-            // 50米×8 往返跑
-            let run50x8Val = sc['50米x8往返跑'] || sc['50米×8往返跑'] || sc['往返跑'];
-            if (run50x8Val !== undefined && run50x8Val !== null && String(run50x8Val).trim() !== '') {
-                let sec = parseTime(run50x8Val);
-                if (sec < 75 || sec > 200) {
-                    addWarn('50米x8往返跑', run50x8Val, `成绩 "${run50x8Val}" 换算为 ${sec}秒，偏离常规标准`);
-                }
-            }
-
-            // 跳绳
-            let ropeVal = sc['一分钟跳绳'] || sc['跳绳'];
-            if (ropeVal !== undefined && ropeVal !== null && String(ropeVal).trim() !== '') {
-                let strRope = String(ropeVal).trim();
-                let numRope = parseFloat(strRope);
-                if (strRope.includes('.')) {
-                    addWarn('一分钟跳绳', strRope, `跳绳不能为小数 "${strRope}" 次`);
-                } else if (numRope > 350) {
-                    addWarn('一分钟跳绳', strRope, `录入了 "${numRope}" 次，数值明显过大`);
-                }
-            }
-
-            // 50米跑
+            // 8. 50米跑
             if (sc['50米']) {
                 let num50 = parseFloat(sc['50米']);
-                if (num50 < 5.5 || num50 > 16) {
-                    addWarn('50米', sc['50米'], `50米成绩为 ${num50}秒，偏离合理范围`);
+                if (num50 < 0) {
+                    addWarn('50米', sc['50米'], '录入了负数值，请重新核实！', 'danger', '50米');
+                } else if (num50 < 5.0) {
+                    addWarn('50米', sc['50米'], `成绩为 ${num50}秒，低于人类极限 (一般≥5.5秒)`, 'warning', '50米');
+                } else if (num50 > 16.0) {
+                    addWarn('50米', sc['50米'], `成绩为 ${num50}秒，超出常规时间 (疑似中长跑或超时未到)`, 'warning', '50米');
+                }
+            }
+
+            // 9. 耐力跑时间格式与秒数位合法性核验
+            ['1000米', '800米', '50米x8往返跑'].forEach(runK => {
+                if (sc[runK]) {
+                    let valStr = String(sc[runK]).trim();
+                    if (valStr.includes('.')) {
+                        let parts = valStr.split('.');
+                        let secStr = parts[1] || '';
+                        let secNum = parseInt(secStr.substring(0, 2), 10);
+                        if (secNum >= 60) {
+                            addWarn(runK, valStr, `秒数部分为 "${secStr}" (≥60秒)，属于无效分秒格式！国家平台将直接报错拒收`, 'danger', runK);
+                        }
+                    }
+                    let totalSec = parseTime(valStr);
+                    if (runK === '1000米' && totalSec > 0) {
+                        if (totalSec < 135) addWarn('1000米', valStr, `成绩换算仅 ${totalSec}秒 (2分15秒内)，远超正常学生水平`, 'warning', '1000米');
+                        if (totalSec > 450) addWarn('1000米', valStr, `成绩达 ${totalSec}秒 (7分30秒以上)，超出常规范围`, 'warning', '1000米');
+                    } else if (runK === '800米' && totalSec > 0) {
+                        if (totalSec < 120) addWarn('800米', valStr, `成绩换算仅 ${totalSec}秒 (2分00秒内)，远超正常学生水平`, 'warning', '800米');
+                        if (totalSec > 420) addWarn('800米', valStr, `成绩达 ${totalSec}秒 (7分00秒以上)，超出常规范围`, 'warning', '800米');
+                    } else if (runK === '50米x8往返跑' && totalSec > 0) {
+                        if (totalSec < 75 || totalSec > 210) {
+                            addWarn('50米x8往返跑', valStr, `成绩换算为 ${totalSec}秒，偏离小学5-6年级常规标准 (75~210秒)`, 'warning', '50米x8往返跑');
+                        }
+                    }
+                }
+            });
+
+            // 10. 仰卧起坐 / 引体向上 / 跳绳数量核验
+            let situpVal = sc['仰卧起坐'] || sc['仰卧'];
+            if (situpVal !== undefined && situpVal !== null && String(situpVal).trim() !== '') {
+                let n = parseFloat(situpVal);
+                if (n > 95) addWarn('仰卧起坐', situpVal, `录入了 "${situpVal}" 次，疑似多输了一位`, 'warning', '仰卧起坐');
+            }
+            let pullVal = sc['引体向上'] || sc['引体'];
+            if (pullVal !== undefined && pullVal !== null && String(pullVal).trim() !== '') {
+                let n = parseFloat(pullVal);
+                if (n > 42) addWarn('引体向上', pullVal, `录入了 "${pullVal}" 次，超出常规中学生水平`, 'warning', '引体向上');
+            }
+            let ropeVal = sc['一分钟跳绳'] || sc['跳绳'];
+            if (ropeVal !== undefined && ropeVal !== null && String(ropeVal).trim() !== '') {
+                let n = parseFloat(ropeVal);
+                if (n > 330) addWarn('一分钟跳绳', ropeVal, `录入了 "${ropeVal}" 次，数值明显过大`, 'warning', '一分钟跳绳');
+            }
+
+            // 11. 性别与学段项目错位检测 (致命错误)
+            if (isMale) {
+                if (sc['800米']) addWarn('800米', sc['800米'], `男生名下误录入了女生800米成绩，国家平台上报将冲突报错`, 'danger', '800米');
+                if (sc['仰卧起坐'] && !isPrimary) addWarn('仰卧起坐', sc['仰卧起坐'], `初中/高中男生体测项为引体向上，误录了女生仰卧起坐`, 'danger', '仰卧起坐');
+            } else {
+                if (sc['1000米']) addWarn('1000米', sc['1000米'], `女生名下误录入了男生1000米成绩，国家平台上报将冲突报错`, 'danger', '1000米');
+                if (sc['引体向上']) addWarn('引体向上', sc['引体向上'], `女生名下误录入了男生引体向上项目`, 'danger', '引体向上');
+            }
+
+            // 12. 必测项缺漏检测 (对正常参测学生)
+            if (!s.exempt) {
+                const missingList = [];
+                if (!sc['身高']) missingList.push('身高');
+                if (!sc['体重']) missingList.push('体重');
+                if (!sc['肺活量']) missingList.push('肺活量');
+                if (!sc['50米']) missingList.push('50米');
+                if (sc['坐位体前屈'] === undefined || sc['坐位体前屈'] === null || String(sc['坐位体前屈']).trim() === '') missingList.push('坐位体前屈');
+
+                if (isPrimary) {
+                    if (!sc['一分钟跳绳'] && !sc['跳绳']) missingList.push('跳绳');
+                    if (rawG.includes('三') || rawG.includes('四') || rawG.includes('五') || rawG.includes('六')) {
+                        if (!sc['仰卧起坐'] && !sc['仰卧']) missingList.push('仰卧起坐');
+                    }
+                    if (rawG.includes('五') || rawG.includes('六')) {
+                        if (!sc['50米x8往返跑'] && !sc['50米×8往返跑'] && !sc['往返跑']) missingList.push('50m×8跑');
+                    }
+                } else {
+                    if (!sc['立定跳远']) missingList.push('立定跳远');
+                    if (isMale) {
+                        if (!sc['1000米']) missingList.push('1000米');
+                        if (!sc['引体向上'] && !sc['引体']) missingList.push('引体向上');
+                    } else {
+                        if (!sc['800米']) missingList.push('800米');
+                        if (!sc['仰卧起坐'] && !sc['仰卧']) missingList.push('仰卧起坐');
+                    }
+                }
+
+                if (missingList.length > 0) {
+                    addWarn('必测项缺漏', `缺 ${missingList.length} 项`, `未测必测项目：【${missingList.join('、')}】，需补测方可上报`, 'missing', missingList[0]);
                 }
             }
         });
     });
 
     localStorage.setItem('tc_standalone_students', JSON.stringify(students));
+    currentSmartCheckErrors = warningItems;
+    currentSmartCheckFilter = 'all';
+
+    // 统计各类型数量
+    const dangerCount = warningItems.filter(x => x.type === 'danger').length;
+    const warningCount = warningItems.filter(x => x.type === 'warning').length;
+    const missingCount = warningItems.filter(x => x.type === 'missing').length;
 
     // 如果数据全部健康，直接给出提示
     if (warningItems.length === 0) {
-        let okMsg = '✅ 数据非常健康，未发现任何逻辑错误或越界数值！';
-        if (autoFixedDotsCount > 0) okMsg += `\n⚡ 已自动修复分秒漏点 (如 204 ➔ 2.04): ${autoFixedDotsCount} 处`;
-        if (cleanedUnitsCount > 0) okMsg += `\n✨ 已清理多余符号: ${cleanedUnitsCount} 处`;
+        let okMsg = '🎉 全校体测数据深度质检通过！未发现任何逻辑错误、格式异常或必测项缺漏。';
+        let fixes = [];
+        if (autoFixedDotsCount > 0) fixes.push(`分秒补点 (如 204 ➔ 2.04): ${autoFixedDotsCount} 处`);
+        if (autoFixedMetersCount > 0) fixes.push(`米转厘米 (如 1.72m ➔ 172cm): ${autoFixedMetersCount} 处`);
+        if (autoFixedDecimalsCount > 0) fixes.push(`计数类小数取整: ${autoFixedDecimalsCount} 处`);
+        if (cleanedUnitsCount > 0) fixes.push(`清理中文单位及杂质符号: ${cleanedUnitsCount} 处`);
+        if (fixes.length > 0) okMsg += `\n\n✨ 系统已自动安全清洗：\n• ` + fixes.join('\n• ');
         alert(okMsg);
         return;
     }
@@ -6582,43 +7018,209 @@ function runSmartCheckOnReport() {
     // 渲染可交互弹窗
     const modal = document.getElementById('smartCheckModal');
     const banner = document.getElementById('smartCheckSummaryBanner');
-    const container = document.getElementById('smartCheckErrorListContainer');
 
+    let totalFixed = autoFixedDotsCount + autoFixedMetersCount + autoFixedDecimalsCount + cleanedUnitsCount;
     banner.innerHTML = `
-        <div><b>✅ 自动清洗与规范化:</b> 自动纠正漏点 <b>${autoFixedDotsCount}</b> 处，清洗杂质符号 <b>${cleanedUnitsCount}</b> 处。</div>
-        <div style="margin-top:4px;"><b>⚠️ 发现异常项:</b> 共 <b>${warningItems.length}</b> 处需要核对，点击右侧按钮直接跳到该学生填录处。</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:6px; margin-bottom:8px;">
+            <div style="background:#E8F5E9; border:1px solid #C8E6C9; border-radius:8px; padding:6px; text-align:center;">
+                <div style="font-size:11px; color:#2E7D32;">✨ 自动清洗修正</div>
+                <div style="font-size:16px; font-weight:800; color:#1B5E20;">${totalFixed} 处</div>
+            </div>
+            <div style="background:#FFEBEE; border:1px solid #FFCDD2; border-radius:8px; padding:6px; text-align:center;">
+                <div style="font-size:11px; color:#C62828;">🔴 致命阻断错误</div>
+                <div style="font-size:16px; font-weight:800; color:#B71C1C;">${dangerCount} 处</div>
+            </div>
+            <div style="background:#FFF8E1; border:1px solid #FFE082; border-radius:8px; padding:6px; text-align:center;">
+                <div style="font-size:11px; color:#F57F17;">🟡 疑似超常数值</div>
+                <div style="font-size:16px; font-weight:800; color:#E65100;">${warningCount} 处</div>
+            </div>
+            <div style="background:#EDE7F6; border:1px solid #D1C4E9; border-radius:8px; padding:6px; text-align:center;">
+                <div style="font-size:11px; color:#512DA8;">⚠️ 必测项目缺漏</div>
+                <div style="font-size:16px; font-weight:800; color:#311B92;">${missingCount} 人</div>
+            </div>
+        </div>
+        <div style="font-size:11px; color:#666; line-height:1.5;">
+            📌 <b>说明：</b>红色为国家平台上报必定失败的格式/性别冲突错误；黄色为违背人体生理规律的可疑数值；紫色为正常参测但未测全必测项的学生。
+        </div>
     `;
 
-    container.innerHTML = warningItems.map(item => `
-        <div style="background:#fff; border:1px solid #FFE0B2; border-left:4px solid #E65100; border-radius:8px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
-            <div style="flex:1;">
-                <div style="font-size:14px; font-weight:bold; color:#212121;">
-                    <span>【${item.className}】</span>
-                    <span style="color:#0D47A1; cursor:pointer;" onclick="jumpToFixStudentScore('${item.className}', '${item.studentName}', '${item.project}')">${item.studentName}</span>
-                    <span style="font-size:11px; background:#FFF3E0; color:#E65100; padding:1px 6px; border-radius:4px; margin-left:4px;">${item.project}</span>
-                </div>
-                <div style="font-size:12px; color:#C62828; margin-top:3px;">
-                    ${item.message}
-                </div>
-            </div>
-            <button class="btn-orange" style="padding:6px 10px; font-size:12px; border-radius:8px; white-space:nowrap; margin:0;"
-                    onclick="jumpToFixStudentScore('${item.className}', '${item.studentName}', '${item.project}')">
-                👉 去修改
-            </button>
-        </div>
-    `).join('');
+    renderSmartCheckToolbar();
+    renderSmartCheckTabs();
+    renderSmartCheckErrorList();
 
     modal.style.display = 'flex';
 }
 
+// 渲染快捷工具栏
+function renderSmartCheckToolbar() {
+    const toolbar = document.getElementById('smartCheckQuickToolbar');
+    if (!toolbar) return;
+
+    let hasGenderMismatch = currentSmartCheckErrors.some(x => x.message && x.message.includes('误录入'));
+    let hasSitMm = currentSmartCheckErrors.some(x => x.project === '坐位体前屈' && x.message && x.message.includes('毫米单位'));
+
+    let btnsHtml = '';
+    if (hasGenderMismatch) {
+        btnsHtml += `
+            <button class="btn-blue" style="font-size:12px; padding:5px 10px; margin:0; background:#0284C7; border-radius:6px;" onclick="cleanMismatchedGenderProjects()">
+                🧹 一键清除错配异性项目
+            </button>
+        `;
+    }
+    if (hasSitMm) {
+        btnsHtml += `
+            <button class="btn-purple" style="font-size:12px; padding:5px 10px; margin:0; background:#7B1FA2; border-radius:6px;" onclick="fixSitReachMillimeters()">
+                📏 一键校准体前屈毫米单位(÷10)
+            </button>
+        `;
+    }
+
+    toolbar.innerHTML = btnsHtml;
+    toolbar.style.display = btnsHtml ? 'flex' : 'none';
+}
+
+// 一键清除性别错配项目
+function cleanMismatchedGenderProjects() {
+    let cleanedCount = 0;
+    Object.keys(students).forEach(cls => {
+        const rawG = normalizeGrade(cls);
+        const isPrimary = rawG.includes('年级') || cls.includes('小');
+        (students[cls] || []).forEach(s => {
+            const sc = s.scores || {};
+            const isMale = (s.gender === '男' || s.gender === '1');
+            if (isMale) {
+                if (sc['800米']) { delete sc['800米']; cleanedCount++; }
+                if (sc['仰卧起坐'] && !isPrimary) { delete sc['仰卧起坐']; cleanedCount++; }
+            } else {
+                if (sc['1000米']) { delete sc['1000米']; cleanedCount++; }
+                if (sc['引体向上']) { delete sc['引体向上']; cleanedCount++; }
+            }
+        });
+    });
+    localStorage.setItem('tc_standalone_students', JSON.stringify(students));
+    showToast(`✅ 已自动清理 ${cleanedCount} 处错配的异性测试项目！`);
+    runSmartCheckOnReport();
+}
+
+// 一键校准体前屈毫米单位
+function fixSitReachMillimeters() {
+    let fixedCount = 0;
+    Object.keys(students).forEach(cls => {
+        (students[cls] || []).forEach(s => {
+            const sc = s.scores || {};
+            if (sc['坐位体前屈'] !== undefined && sc['坐位体前屈'] !== null && String(sc['坐位体前屈']).trim() !== '') {
+                let sit = parseFloat(sc['坐位体前屈']);
+                if (sit >= 50 && sit <= 350) {
+                    sc['坐位体前屈'] = (sit / 10).toFixed(1);
+                    fixedCount++;
+                }
+            }
+        });
+    });
+    localStorage.setItem('tc_standalone_students', JSON.stringify(students));
+    showToast(`✅ 已将 ${fixedCount} 处疑似毫米单位的体前屈成绩自动除以10换算为厘米！`);
+    runSmartCheckOnReport();
+}
+
+// 渲染筛选分段器
+function renderSmartCheckTabs() {
+    const tabsWrap = document.getElementById('smartCheckTabsWrap');
+    if (!tabsWrap) return;
+
+    const allCount = currentSmartCheckErrors.length;
+    const dangerCount = currentSmartCheckErrors.filter(x => x.type === 'danger').length;
+    const warningCount = currentSmartCheckErrors.filter(x => x.type === 'warning').length;
+    const missingCount = currentSmartCheckErrors.filter(x => x.type === 'missing').length;
+
+    const tabs = [
+        { key: 'all', label: `全部 (${allCount})` },
+        { key: 'danger', label: `🔴 致命阻断 (${dangerCount})` },
+        { key: 'warning', label: `🟡 疑似超常 (${warningCount})` },
+        { key: 'missing', label: `⚠️ 必测缺漏 (${missingCount})` }
+    ];
+
+    tabsWrap.innerHTML = tabs.map(t => `
+        <div onclick="filterSmartCheckTab('${t.key}')"
+             style="padding:4px 10px; font-size:12px; font-weight:bold; border-radius:15px; cursor:pointer; white-space:nowrap; transition:all 0.15s ease;
+                    background:${currentSmartCheckFilter === t.key ? '#E65100' : '#F5F5F5'}; color:${currentSmartCheckFilter === t.key ? '#fff' : '#666'};">
+            ${t.label}
+        </div>
+    `).join('');
+}
+
+// 切换筛选类型
+function filterSmartCheckTab(filterKey) {
+    currentSmartCheckFilter = filterKey;
+    renderSmartCheckTabs();
+    renderSmartCheckErrorList();
+}
+
+// 渲染错误卡片列表
+function renderSmartCheckErrorList() {
+    const container = document.getElementById('smartCheckErrorListContainer');
+    if (!container) return;
+
+    let filtered = currentSmartCheckErrors;
+    if (currentSmartCheckFilter !== 'all') {
+        filtered = currentSmartCheckErrors.filter(x => x.type === currentSmartCheckFilter);
+    }
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:25px; color:#999; font-size:13px;">该分类下无异常数据 🎉</div>`;
+        return;
+    }
+
+    container.innerHTML = filtered.map(item => {
+        let borderLeftColor = '#FF9800';
+        let badgeBg = '#FFF3E0';
+        let badgeColor = '#E65100';
+        let badgeText = item.project;
+
+        if (item.type === 'danger') {
+            borderLeftColor = '#D32F2F';
+            badgeBg = '#FFEBEE';
+            badgeColor = '#C62828';
+        } else if (item.type === 'missing') {
+            borderLeftColor = '#7B1FA2';
+            badgeBg = '#EDE7F6';
+            badgeColor = '#512DA8';
+        }
+
+        const btnText = item.type === 'missing' ? '👉 去补测' : '👉 去修改';
+        const targetProj = item.targetProject || item.project;
+
+        return `
+            <div style="background:#fff; border:1px solid #E0E0E0; border-left:4px solid ${borderLeftColor}; border-radius:8px; padding:9px 12px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <div style="flex:1;">
+                    <div style="font-size:13px; font-weight:bold; color:#212121; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
+                        <span style="color:#666;">【${item.className}】</span>
+                        <span style="color:#0D47A1; cursor:pointer;" onclick="jumpToFixStudentScore('${item.className}', '${item.studentName}', '${item.project}', '${targetProj}')">${item.studentName}</span>
+                        <span style="font-size:11px; color:${item.gender === '男' ? '#1976D2' : '#E91E63'}; font-weight:normal;">(${item.gender})</span>
+                        <span style="font-size:11px; background:${badgeBg}; color:${badgeColor}; font-weight:bold; padding:1px 6px; border-radius:4px;">${badgeText}</span>
+                        ${item.value ? `<span style="font-size:11px; color:#888; font-weight:normal;">[当前: ${item.value}]</span>` : ''}
+                    </div>
+                    <div style="font-size:12px; color:${item.type === 'danger' ? '#C62828' : (item.type === 'missing' ? '#512DA8' : '#D84315')}; margin-top:3px; line-height:1.4;">
+                        ${item.message}
+                    </div>
+                </div>
+                <button class="btn-orange" style="padding:6px 10px; font-size:12px; border-radius:8px; white-space:nowrap; margin:0;"
+                        onclick="jumpToFixStudentScore('${item.className}', '${item.studentName}', '${item.project}', '${targetProj}')">
+                    ${btnText}
+                </button>
+            </div>
+        `;
+    }).join('');
+}
+
 // 2. 点击学生姓名或“去修改”按钮后的精准定位与跳转函数
-function jumpToFixStudentScore(className, studentName, projectKey) {
+function jumpToFixStudentScore(className, studentName, projectKey, targetProjectHint) {
     // 关闭校验弹窗
     const checkModal = document.getElementById('smartCheckModal');
     if (checkModal) checkModal.style.display = 'none';
 
     // 1. 切换到【数据采集】视口
-switchTcView('collect');
+    switchTcView('collect');
+    
     // 2. 选中对应班级并触发展开
     const clsSelect = document.getElementById('tcClassSelect');
     if (clsSelect) {
@@ -6627,10 +7229,11 @@ switchTcView('collect');
     }
 
     // 3. 映射对应的项目按钮代号
-    let targetProjVal = projectKey;
-    if (projectKey === '身高' || projectKey === '体重') targetProjVal = 'BMI';
-    if (projectKey === '跳绳') targetProjVal = '一分钟跳绳';
-    if (projectKey.includes('往返跑') || projectKey.includes('50x8')) targetProjVal = '50米x8往返跑';
+    let targetProjVal = targetProjectHint || projectKey;
+    if (targetProjVal === '必测项缺漏') targetProjVal = targetProjectHint || '50米';
+    if (targetProjVal === '身高' || targetProjVal === '体重' || targetProjVal === 'BMI') targetProjVal = 'BMI';
+    if (targetProjVal === '跳绳' || targetProjVal === '一分钟跳绳') targetProjVal = '一分钟跳绳';
+    if (targetProjVal.includes('往返跑') || targetProjVal.includes('50x8') || targetProjVal.includes('50m×8')) targetProjVal = '50米x8往返跑';
 
     // 触发点击该测试项目
     selectTcProjectChip(targetProjVal);
@@ -6638,10 +7241,8 @@ switchTcView('collect');
     // 4. 定位并聚焦到具体这名学生的输入框
     setTimeout(() => {
         let inputEl = null;
-        if (projectKey === '身高') {
+        if (targetProjVal === 'BMI') {
             inputEl = document.querySelector(`.tc-batch-input[data-name="${studentName}"][data-sub="h"]`);
-        } else if (projectKey === '体重') {
-            inputEl = document.querySelector(`.tc-batch-input[data-name="${studentName}"][data-sub="w"]`);
         } else {
             inputEl = document.querySelector(`.tc-batch-input[data-name="${studentName}"]`);
         }
@@ -6660,10 +7261,11 @@ switchTcView('collect');
                 inputEl.style.border = '1px solid #FFB74D';
             }, 2500);
 
-            showToast(`🎯 已定位到【${studentName}】的${projectKey}成绩`);
+            showToast(`🎯 已精准定位到【${studentName}】的${targetProjVal}测试项`);
         }
     }, 200);
 }
+
 
 let reportTitleClickCount = 0;
 let reportTitleClickTimer = null;
@@ -9306,6 +9908,1758 @@ function clearPeScoresOnly() {
     showToast(`✅ 已清空 ${clearedCount} 名学生的体育课平时成绩（体测数据已完整保留）`);
     renderPeAccordion();
 }
+
+
+// =========================================================================
+// 5. 智能备课模块 (新课标教学设计、德阳标准教案生成、大单元规划与 Word 导出)
+// =========================================================================
+
+const LESSON_STORAGE_KEY = 'tc_smart_lesson_storage';
+const LESSON_AI_CONFIG_KEY = 'tc_smart_lesson_ai_cfg';
+
+const DEFAULT_LESSON_AI_PROVIDERS = {
+    builtin: {
+        name: "⭐️ 内置新课标专家知识库引擎（免API·开箱即用·永久免费）",
+        baseUrl: "",
+        model: "expert-builtin"
+    },
+    zhipu: {
+        name: "⚡ 智谱 AI (GLM-4-Flash 官方永久免费通道)",
+        baseUrl: "https://open.bigmodel.cn/api/paas/v4",
+        model: "glm-4-flash"
+    },
+    siliconflow: {
+        name: "🚀 硅基流动 SiliconFlow (赠送免费额度·DeepSeek/千问)",
+        baseUrl: "https://api.siliconflow.cn/v1",
+        model: "deepseek-ai/DeepSeek-V3"
+    },
+    deepseek: {
+        name: "🤖 DeepSeek 官方 API",
+        baseUrl: "https://api.deepseek.com",
+        model: "deepseek-chat"
+    },
+    doubao: {
+        name: "🌊 字节跳动·豆包 API (火山引擎)",
+        baseUrl: "https://ark.cn-beijing.volces.com/api/v3",
+        model: "doubao-pro-32k"
+    },
+    openai: {
+        name: "🌐 OpenAI 官方 API",
+        baseUrl: "https://api.openai.com/v1",
+        model: "gpt-4o-mini"
+    },
+    gemini: {
+        name: "💎 Google Gemini 官方 API (OpenAI 协议兼容)",
+        baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai",
+        model: "gemini-1.5-flash"
+    },
+    ollama: {
+        name: "💻 本地 Ollama (完全离线免Key)",
+        baseUrl: "http://localhost:11434/v1",
+        model: "qwen2.5:7b"
+    },
+    custom: {
+        name: "⚙️ 自定义兼容 OpenAI 协议接口",
+        baseUrl: "",
+        model: ""
+    }
+};
+
+let currentActiveLessonPlan = null;
+let currentActiveUnitPlan = null;
+
+// 读取 AI 配置
+function getLessonAiConfig() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(LESSON_AI_CONFIG_KEY) || 'null');
+        if (saved && saved.provider) {
+            return saved;
+        }
+    } catch (e) {}
+    return {
+        provider: 'builtin',
+        baseUrl: '',
+        apiKey: '',
+        modelName: 'expert-builtin'
+    };
+}
+
+// 保存 AI 配置
+function saveLessonAiSettings() {
+    const provider = document.getElementById('lessonProviderSelect').value;
+    const baseUrl = document.getElementById('lessonApiBaseUrl').value.trim();
+    const apiKey = document.getElementById('lessonApiKey').value.trim();
+    const modelName = document.getElementById('lessonApiModelName').value.trim();
+
+    const cfg = { provider, baseUrl, apiKey, modelName };
+    localStorage.setItem(LESSON_AI_CONFIG_KEY, JSON.stringify(cfg));
+    updateLessonEngineBadge();
+    showToast('💾 AI 备课引擎配置已成功保存！');
+    switchLessonSubTab('plan');
+}
+
+// 恢复默认 AI 配置 (内置免密)
+function resetLessonAiSettings() {
+    localStorage.removeItem(LESSON_AI_CONFIG_KEY);
+    initLessonAiSettingsUI();
+    updateLessonEngineBadge();
+    showToast('🔄 已恢复为默认【内置新课标专家引擎】');
+}
+
+// 更新 AI 配置界面
+function onLessonProviderChange() {
+    const provider = document.getElementById('lessonProviderSelect').value;
+    const configArea = document.getElementById('lessonCustomApiConfigArea');
+    const urlInput = document.getElementById('lessonApiBaseUrl');
+    const modelInput = document.getElementById('lessonApiModelName');
+    const keyInput = document.getElementById('lessonApiKey');
+
+    if (provider === 'builtin') {
+        configArea.style.display = 'none';
+    } else {
+        configArea.style.display = 'block';
+        const defaults = DEFAULT_LESSON_AI_PROVIDERS[provider] || {};
+        if (!urlInput.value || Object.values(DEFAULT_LESSON_AI_PROVIDERS).some(d => d.baseUrl === urlInput.value)) {
+            urlInput.value = defaults.baseUrl || '';
+        }
+        if (!modelInput.value || Object.values(DEFAULT_LESSON_AI_PROVIDERS).some(d => d.model === modelInput.value)) {
+            modelInput.value = defaults.model || '';
+        }
+        if (provider === 'ollama' && !keyInput.value) {
+            keyInput.value = 'ollama';
+        }
+    }
+}
+
+function initLessonAiSettingsUI() {
+    const cfg = getLessonAiConfig();
+    const sel = document.getElementById('lessonProviderSelect');
+    if (sel) sel.value = cfg.provider || 'builtin';
+    const urlInp = document.getElementById('lessonApiBaseUrl');
+    if (urlInp) urlInp.value = cfg.baseUrl || '';
+    const keyInp = document.getElementById('lessonApiKey');
+    if (keyInp) keyInp.value = cfg.apiKey || '';
+    const modInp = document.getElementById('lessonApiModelName');
+    if (modInp) modInp.value = cfg.modelName || '';
+
+    onLessonProviderChange();
+}
+
+function updateLessonEngineBadge() {
+    const badge = document.getElementById('lessonCurrentEngineBadge');
+    if (!badge) return;
+    const cfg = getLessonAiConfig();
+    const p = cfg.provider;
+    if (p === 'siliconflow') {
+        badge.innerHTML = '🚀 硅基流动 (DeepSeek/千问)';
+        badge.style = 'font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#EFF6FF; color:#2563EB; border:1px solid #93C5FD;';
+    } else if (p === 'zhipu') {
+        badge.innerHTML = '⚡ 智谱 GLM-4 永久免费';
+        badge.style = 'font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#FAF5FF; color:#7E22CE; border:1px solid #D8B4FE;';
+    } else if (p === 'deepseek') {
+        badge.innerHTML = '🤖 DeepSeek 官方在线';
+        badge.style = 'font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE;';
+    } else if (p === 'doubao') {
+        badge.innerHTML = '🌊 豆包在线引擎 (火山引擎)';
+        badge.style = 'font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#F0FDF4; color:#15803D; border:1px solid #86EFAC;';
+    } else if (p === 'openai') {
+        badge.innerHTML = '🌐 OpenAI (GPT-4o)';
+        badge.style = 'font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#F0FDF4; color:#166534; border:1px solid #BBF7D0;';
+    } else if (p === 'gemini') {
+        badge.innerHTML = '💎 Google Gemini 引擎';
+        badge.style = 'font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#EFF6FF; color:#1E40AF; border:1px solid #BFDBFE;';
+    } else if (p === 'ollama') {
+        badge.innerHTML = '💻 本地 Ollama 离线模型';
+        badge.style = 'font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#F1F5F9; color:#475569; border:1px solid #CBD5E1;';
+    } else if (p === 'custom') {
+        badge.innerHTML = '⚙️ 自定义兼容接口';
+        badge.style = 'font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#FFFBEB; color:#B45309; border:1px solid #FDE68A;';
+    } else {
+        badge.innerHTML = '⭐️ 内置专家免密引擎 (免Key·免费秒出)';
+        badge.style = 'font-size:12px; font-weight:bold; padding:4px 10px; border-radius:12px; background:#DCFCE7; color:#15803D; border:1px solid #86EFAC;';
+    }
+}
+
+// ----------------- 档案库本地持久化 -----------------
+function getLessonStorage() {
+    try {
+        const d = JSON.parse(localStorage.getItem(LESSON_STORAGE_KEY) || '{}');
+        return { units: d.units || [], lessons: d.lessons || [] };
+    } catch (e) {
+        return { units: [], lessons: [] };
+    }
+}
+
+function saveLessonStorage(data) {
+    localStorage.setItem(LESSON_STORAGE_KEY, JSON.stringify(data));
+    updateArchiveCountBadge();
+}
+
+function updateArchiveCountBadge() {
+    const st = getLessonStorage();
+    const tag = document.getElementById('lessonArchiveCountTag');
+    if (tag) tag.innerText = (st.lessons.length + st.units.length);
+}
+
+// ----------------- 切换智能备课子视图 -----------------
+function switchLessonSubTab(tabKey) {
+    const tabs = ['plan', 'unit', 'archive', 'settings'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`lesson-subtab-${t}`);
+        if (btn) btn.classList.toggle('active', t === tabKey);
+        const panel = document.getElementById(`lesson-panel-${t}`);
+        if (panel) panel.style.display = (t === tabKey ? 'block' : 'none');
+    });
+
+    if (tabKey === 'archive') {
+        renderLessonArchiveList();
+    } else if (tabKey === 'settings') {
+        initLessonAiSettingsUI();
+    }
+}
+
+// 初始化备课模块工作台
+function initLessonModuleWorkspace() {
+    initLessonAiSettingsUI();
+    updateLessonEngineBadge();
+    updateArchiveCountBadge();
+
+    // 填充班级下拉数据列表
+    const datalist = document.getElementById('lessonClassDataList');
+    if (datalist) {
+        const clsNames = Object.keys(students || {});
+        datalist.innerHTML = clsNames.map(c => `<option value="${c}">`).join('');
+    }
+
+    // 刷新大单元联动栏
+    refreshLessonUnitLinkBar();
+}
+
+// ----------------- 快捷常用项目填入 -----------------
+const LESSON_PRESETS = {
+    '快速跑': {
+        topic: '田径：起跑技术与加速跑',
+        seq: '第 2 次课 / 共 6 次课',
+        stage: '巩固课',
+        grade: '八年级 1 班',
+        equip: '标准跑道、标志桶8个、标志碟40个、发令笛1个、秒表2块、音响1台',
+        req: '强调蹲踞式起跑“各就位-预备”身体重心平稳前移与第一步快速积极蹬地；融入下肢爆发力与核心力量课课练；设置4×30米让距迎面接力赛。'
+    },
+    '篮球': {
+        topic: '篮球：行进间体前变向运球与传切配合',
+        seq: '第 3 次课 / 共 8 次课',
+        stage: '提高课',
+        grade: '七年级 2 班',
+        equip: '标准篮球场2块、篮球42个、标志桶16个、训练背心4组、发令哨1个',
+        req: '重点突破变向时“按拍球外侧上方、快速变向推拨、跨步转体侧身降重心”；安排半场3对3限制性对抗达标赛；加入下肢侧向滑步防守脚步体能练习。'
+    },
+    '足球': {
+        topic: '足球：脚内侧传接球与射门综合运用',
+        seq: '第 2 次课 / 共 6 次课',
+        stage: '巩固课',
+        grade: '五年级 1 班',
+        equip: '足球场1块、小足球门4个、足球40个、标志碟30个、敏捷梯2条',
+        req: '支撑脚脚尖正对出球方向，屈膝展髋击球后中部；设计四角传球射门接力赛；课课练安排敏捷梯快速碎步与立卧撑跳。'
+    },
+    '排球': {
+        topic: '排球：正面双手垫球技术与移动步法',
+        seq: '第 2 次课 / 共 6 次课',
+        stage: '巩固课',
+        grade: '高一 3 班',
+        equip: '排球场2块、低排球网2张、排球42个、软式排球若干、音响1台',
+        req: '插夹提移蹬，两臂夹紧形成平整垫击面；二人一组一抛一垫与连续自垫球挑战赛；课课练安排深蹲起与核心平板支撑。'
+    },
+    '跳绳': {
+        topic: '花样跳绳：双脚并跳与单摇交叉跳进阶',
+        seq: '第 3 次课 / 共 6 次课',
+        stage: '巩固课',
+        grade: '三年级 2 班',
+        equip: '平整田径场、跳绳44根、音乐播放器1台、秒表1块',
+        req: '手腕摇绳发力，前脚掌轻盈起跳，屈膝缓冲；开展1分钟速度耐力跳对抗赛；体能环节安排开合跳与蛙跳。'
+    },
+    '体操': {
+        topic: '体操技巧：前滚翻与后滚翻组合练习',
+        seq: '第 2 次课 / 共 4 次课',
+        stage: '新授课',
+        grade: '四年级 1 班',
+        equip: '体操大垫子10张、小垫子20张、保护救护软垫4块',
+        req: '两手撑垫、屈臂低头、团身紧、滚动圆滑；同伴保护与帮助方法落实；课课练安排仰卧起坐与背飞挺身。'
+    }
+};
+
+function quickFillLessonPreset(sportKey) {
+    const p = LESSON_PRESETS[sportKey];
+    if (!p) return;
+    document.getElementById('lessonTopicName').value = p.topic;
+    document.getElementById('lessonSeq').value = p.seq;
+    document.getElementById('lessonStage').value = p.stage;
+    document.getElementById('lessonClassGrade').value = p.grade;
+    document.getElementById('lessonVenueEquip').value = p.equip;
+    document.getElementById('lessonSpecialReq').value = p.req;
+    showToast(`⚡ 已快速载入【${sportKey}】教案核心预设参数！`);
+}
+
+// 刷新大单元联动下拉条
+function refreshLessonUnitLinkBar() {
+    const bar = document.getElementById('lessonUnitLinkBar');
+    const sel = document.getElementById('lessonUnitLessonSelector');
+    if (!bar || !sel) return;
+
+    const st = getLessonStorage();
+    const units = st.units || [];
+    if (units.length === 0) {
+        bar.style.display = 'none';
+        return;
+    }
+
+    const latestUnit = currentActiveUnitPlan || units[0];
+    const lessons = latestUnit.lessons || [];
+    if (lessons.length === 0) {
+        bar.style.display = 'none';
+        return;
+    }
+
+    bar.style.display = 'block';
+    sel.innerHTML = `<option value="">-- 📚 当前大单元：《${latestUnit.unit_title.slice(0, 10)}...》课次 --</option>` +
+        lessons.map((l, i) => `<option value="${i}">课次 ${l.seq || i + 1}: ${l.content.slice(0, 14)}...</option>`).join('');
+}
+
+// 从大单元选择课次导入
+function onSelectUnitLessonInWeb() {
+    const sel = document.getElementById('lessonUnitLessonSelector');
+    const idx = parseInt(sel.value, 10);
+    if (isNaN(idx)) return;
+    loadUnitLessonIntoPlan(idx);
+}
+
+// ----------------- 1. 学段水平与项目智能判定与界面联动 -----------------
+function detectLevel(text) {
+    const t = String(text || '');
+    if (t.includes('水平五') || t.includes('高') || /高[一二三123]/.test(t) || /3[123]/.test(t)) return '水平五';
+    if (t.includes('水平四') || t.includes('初') || /七|八|九|[789]年级/.test(t) || /2[123]/.test(t)) return '水平四';
+    if (t.includes('水平三') || /五|六|[56]年级/.test(t) || /1[56]/.test(t)) return '水平三';
+    if (t.includes('水平二') || /三|四|[34]年级/.test(t) || /1[34]/.test(t)) return '水平二';
+    if (t.includes('水平一') || /一|二|[12]年级/.test(t) || /1[12]/.test(t)) return '水平一';
+    return '水平四';
+}
+
+function detectSport(text) {
+    const t = String(text || '').toLowerCase();
+    if (/篮球|运球|投篮|上篮|传切|挡拆/.test(t)) return 'basketball';
+    if (/足球|脚内侧|脚背|射门|颠球|二过一/.test(t)) return 'football';
+    if (/排球|垫球|传球|发球|扣球|拦网/.test(t)) return 'volleyball';
+    if (/乒乓|羽毛|网球|推挡|正手|反手|挑球|高远球/.test(t)) return 'racket';
+    if (/耐久|800|1000|中长跑|长跑|呼吸节奏|极点/.test(t)) return 'run_endurance';
+    if (/跑|起跑|加速跑|途中跑|冲刺|接力|步频|步幅/.test(t)) return 'run_sprint';
+    if (/跳远|跳高|立定跳|三级跳|跳跃|跨越/.test(t)) return 'jump';
+    if (/投掷|实心球|铅球|垒球|标枪|推铅球/.test(t)) return 'throw';
+    if (/体操|技巧|滚翻|前滚翻|后滚翻|肩肘倒立|支撑跳跃/.test(t)) return 'gymnastics';
+    if (/武术|五步拳|少年拳|连环拳|抱拳|长拳/.test(t)) return 'wushu';
+    if (/跳绳|花样跳绳|双摇|摇绳/.test(t)) return 'rope';
+    return 'general';
+}
+
+function onLessonLevelChange() {
+    const lvlEl = document.getElementById('lessonLevelSelect');
+    const durSel = document.getElementById('lessonDuration');
+    if (!lvlEl || !durSel) return;
+    durSel.value = (lvlEl.value === '水平五') ? '45' : '40';
+}
+
+function onLessonClassGradeInput() {
+    const clsInp = document.getElementById('lessonClassGrade');
+    if (!clsInp) return;
+    const lvl = detectLevel(clsInp.value);
+    const lvlSel = document.getElementById('lessonLevelSelect');
+    if (lvlSel && lvlSel.value !== lvl) {
+        lvlSel.value = lvl;
+        onLessonLevelChange();
+    }
+}
+
+// ----------------- 2. 心率曲线动态绘制 (按水平一到水平五自适应心率负荷) -----------------
+function generateHeartRateDataUrl(durationMinutes = 40, level = '水平四', customPeak = null, customAvg = null) {
+    const canvas = (typeof document !== 'undefined' && document.getElementById('lessonHeartRateCanvas')) 
+                   || (typeof document !== 'undefined' && document.createElement('canvas'));
+    if (!canvas || !canvas.getContext) return '';
+    canvas.width = 650;
+    canvas.height = 220;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+
+    let defaultPeak = 170;
+    let defaultAvg = 144;
+    if (level === '水平一') { defaultPeak = 148; defaultAvg = 125; }
+    else if (level === '水平二') { defaultPeak = 158; defaultAvg = 135; }
+    else if (level === '水平三') { defaultPeak = 165; defaultAvg = 140; }
+    else if (level === '水平四') { defaultPeak = 172; defaultAvg = 145; }
+    else if (level === '水平五') { defaultPeak = 175; defaultAvg = 148; }
+
+    const peakHr = customPeak || defaultPeak;
+    const avgHr = customAvg || defaultAvg;
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const padL = 46, padR = 24, padT = 30, padB = 30;
+    const plotW = canvas.width - padL - padR;
+    const plotH = canvas.height - padT - padB;
+    const minHr = 60, maxHr = 190;
+
+    const times = durationMinutes === 45 
+        ? [0, 3, 6, 9, 14, 20, 26, 32, 38, 41, 45] 
+        : [0, 2, 5, 8, 12, 18, 24, 30, 34, 37, 40];
+
+    const startHr = level === '水平一' ? 75 : 80;
+    const warmupHr = Math.round(avgHr * 0.88);
+    const midValleyHr = Math.round(avgHr * 0.95);
+    const coolHr = Math.round(startHr * 1.1);
+
+    const rates = [startHr, Math.round(startHr * 1.15), warmupHr, Math.round(warmupHr * 0.96), Math.round(avgHr * 0.98), avgHr, midValleyHr, peakHr, Math.round(peakHr * 0.92), Math.round(avgHr * 0.78), coolHr];
+    const totalTime = times[times.length - 1];
+
+    const getX = t => padL + (t / totalTime) * plotW;
+    const getY = hr => padT + plotH - ((hr - minHr) / (maxHr - minHr)) * plotH;
+
+    // 参考网格与坐标轴
+    ctx.lineWidth = 1;
+    [60, 90, 120, 150, 180].forEach(hr => {
+        const y = getY(hr);
+        ctx.strokeStyle = '#EEEEEE';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(padL, y);
+        ctx.lineTo(canvas.width - padR, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#9E9E9E';
+        ctx.font = '10px -apple-system, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(hr, padL - 8, y + 3);
+    });
+
+    times.forEach(t => {
+        const x = getX(t);
+        ctx.strokeStyle = '#F0F0F0';
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        ctx.moveTo(x, padT);
+        ctx.lineTo(x, padT + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#9E9E9E';
+        ctx.font = '10px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(t, x, canvas.height - 12);
+    });
+
+    ctx.strokeStyle = '#CBD5E1';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT + plotH);
+    ctx.lineTo(canvas.width - padR, padT + plotH);
+    ctx.stroke();
+
+    // 平均心率蓝色虚线
+    const yAvg = getY(avgHr);
+    ctx.strokeStyle = '#1976D2';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(padL, yAvg);
+    ctx.lineTo(canvas.width - padR, yAvg);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 红色面积与主曲线
+    ctx.beginPath();
+    ctx.moveTo(getX(times[0]), getY(rates[0]));
+    for (let i = 1; i < times.length; i++) ctx.lineTo(getX(times[i]), getY(rates[i]));
+    ctx.lineTo(getX(times[times.length - 1]), padT + plotH);
+    ctx.lineTo(getX(times[0]), padT + plotH);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, padT, 0, padT + plotH);
+    grad.addColorStop(0, 'rgba(211, 47, 47, 0.22)');
+    grad.addColorStop(1, 'rgba(211, 47, 47, 0.0)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.strokeStyle = '#D32F2F';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(getX(times[0]), getY(rates[0]));
+    for (let i = 1; i < times.length; i++) ctx.lineTo(getX(times[i]), getY(rates[i]));
+    ctx.stroke();
+
+    times.forEach((t, i) => {
+        const x = getX(t);
+        const y = getY(rates[i]);
+        ctx.fillStyle = '#D32F2F';
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    });
+
+    return canvas.toDataURL ? canvas.toDataURL('image/png') : '';
+}
+
+// ----------------- 3. 德阳标准 7 列表格渲染器 (支持网页与 Word 格式统一) -----------------
+function renderDeyangLessonTableHtml(d, chartImgSrc, isWordExport = false) {
+    const clean = str => (str || '').replace(/\n/g, '<br>');
+
+    const tblBorder = isWordExport 
+        ? 'border="1" cellspacing="0" cellpadding="0" style="width:100%; border-collapse:collapse; border:1.5pt solid black; mso-border-alt:solid black 1.0pt; font-family:\'仿宋_GB2312\',\'仿宋\',\'FangSong\',\'SimSun\',serif; font-size:10.5pt; line-height:140%; table-layout:fixed;"'
+        : 'style="width: 100%; border-collapse: collapse; border: 1.5px solid #000; font-size: 13px; line-height: 1.45; table-layout: fixed;"';
+
+    const cellBorder = isWordExport 
+        ? 'border:1.0pt solid black; mso-border-alt:solid black 1.0pt; padding:4.5pt 6.0pt;'
+        : 'border: 1px solid #000; padding: 6px;';
+
+    const labelCell = isWordExport
+        ? 'border:1.0pt solid black; mso-border-alt:solid black 1.0pt; background:#FAFAFA; font-family:\'黑体\',\'SimHei\',sans-serif; font-weight:bold; text-align:center; padding:4.5pt 6.0pt;'
+        : 'border: 1px solid #000; font-weight: bold; text-align: center; background: #fafafa; font-family: \'SimHei\'; padding: 6px;';
+
+    const headerRowStyle = isWordExport
+        ? 'background:#F2F2F2; font-family:\'黑体\',\'SimHei\',sans-serif; font-weight:bold; text-align:center;'
+        : 'background: #f2f2f2; font-weight: bold; text-align: center; font-family: \'SimHei\';';
+
+    const headerTop = isWordExport
+        ? `<div style="text-align:center; font-family:'黑体','SimHei',sans-serif; font-size:16pt; font-weight:bold; margin-bottom:8pt; letter-spacing:1pt;">德阳市中小学体育与健康课时计划（教案）</div>
+           <table border="0" style="width:100%; border:none; margin-bottom:6pt; font-size:10.5pt; font-weight:bold; font-family:'仿宋_GB2312','仿宋',serif;">
+               <tr>
+                   <td style="border:none; text-align:left; padding:0;">上课教师：${d.teacher_name || ''}</td>
+                   <td style="border:none; text-align:right; padding:0;">上课时间：${d.teach_time || ''}</td>
+               </tr>
+           </table>`
+        : `<h2 style="text-align: center; font-family: 'SimHei', sans-serif; margin-bottom: 8px; font-size: 20px; letter-spacing: 1px;">德阳市中小学体育与健康课时计划（教案）</h2>
+           <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; font-weight: bold; color: #333;">
+               <span>上课教师：${d.teacher_name || ''}</span>
+               <span>上课时间：${d.teach_time || ''}</span>
+           </div>`;
+
+    const containerStart = isWordExport
+        ? `<div style="font-family:'仿宋_GB2312','仿宋','SimSun',serif; color:#000; width:100%;">`
+        : `<div style="font-family: 'FangSong', 'SimSun', serif; color: #111; max-width: 950px; margin: 0 auto; background: #fff; padding: 18px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">`;
+
+    const imgTag = isWordExport
+        ? `<img src="${chartImgSrc}" width="380" height="130" style="width:380pt; height:130pt; display:block; margin:0 auto;" />`
+        : `<img src="${chartImgSrc}" style="width: 98%; max-width: 420px; height: auto; display: block; margin: 0 auto;" />`;
+
+    return `
+    ${containerStart}
+        ${headerTop}
+        <table ${tblBorder}>
+            <colgroup>
+                <col style="width: 8%;">
+                <col style="width: 24%;">
+                <col style="width: 14%;">
+                <col style="width: 13%;">
+                <col style="width: 19%;">
+                <col style="width: 11%;">
+                <col style="width: 11%;">
+            </colgroup>
+            <tr>
+                <td style="${labelCell}">课题名称</td>
+                <td style="${cellBorder}">${d.topic_name || ''}</td>
+                <td colspan="2" style="${cellBorder} text-align: center;"><b>课次：</b>${d.lesson_seq || ''}</td>
+                <td style="${cellBorder} text-align: center;"><b>班级：</b>${d.class_grade || ''}</td>
+                <td colspan="2" style="${cellBorder} text-align: center;"><b>人数：</b>${d.student_count || ''}</td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">学习目标</td>
+                <td colspan="6" style="${cellBorder}">
+                    <b>1. 运动能力：</b>${clean(d.motor_ability)}<br>
+                    <b>2. 健康行为：</b>${clean(d.health_behavior)}<br>
+                    <b>3. 体育品德：</b>${clean(d.sports_morality)}
+                </td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">教学内容</td>
+                <td colspan="6" style="${cellBorder}">${clean(d.teaching_content)}</td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">重难点</td>
+                <td colspan="6" style="${cellBorder}"><b>教学内容重难点：</b><br>${clean(d.key_difficult_points)}</td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">安全保障</td>
+                <td colspan="3" style="${cellBorder}">${clean(d.safety_assurance)}</td>
+                <td style="${labelCell}">场地器材</td>
+                <td colspan="2" style="${cellBorder}">${clean(d.venue_and_equipment)}</td>
+            </tr>
+            <tr style="${headerRowStyle}">
+                <td rowspan="2" style="${labelCell}">课的结构</td>
+                <td rowspan="2" style="${labelCell}">具体教学内容</td>
+                <td colspan="2" rowspan="2" style="${labelCell}">教与学的方法</td>
+                <td rowspan="2" style="${labelCell}">组织形式</td>
+                <td colspan="2" style="${labelCell}">运动负荷</td>
+            </tr>
+            <tr style="${headerRowStyle}">
+                <td style="${labelCell}">时间</td>
+                <td style="${labelCell}">强度</td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">准<br>备<br>部<br>分</td>
+                <td style="${cellBorder}">${clean(d.prep_content)}</td>
+                <td colspan="2" style="${cellBorder}">${clean(d.prep_methods)}</td>
+                <td style="${cellBorder} text-align: center; font-family: 'Consolas', 'Courier New', monospace; font-size: ${isWordExport ? '10pt' : '12.5px'};">${clean(d.prep_org)}</td>
+                <td style="${cellBorder} text-align: center;">${d.prep_time || '8-10'}</td>
+                <td style="${cellBorder} text-align: center;">${d.prep_intensity || '小到中'}</td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">基<br>本<br>部<br>分</td>
+                <td style="${cellBorder}">${clean(d.base_content)}</td>
+                <td colspan="2" style="${cellBorder}">${clean(d.base_methods)}</td>
+                <td style="${cellBorder} text-align: center; font-family: 'Consolas', 'Courier New', monospace; font-size: ${isWordExport ? '10pt' : '12.5px'};">${clean(d.base_org)}</td>
+                <td style="${cellBorder} text-align: center;">${d.base_time || '25-28'}</td>
+                <td style="${cellBorder} text-align: center;">${d.base_intensity || '中到大'}</td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">结<br>束<br>部<br>分</td>
+                <td style="${cellBorder}">1、放松<br>2、师生总结<br>3、布置课后练习作业<br>4、回收器材<br>5、师生再见</td>
+                <td colspan="2" style="${cellBorder}">1、教师带领学生放松<br>2、引导学生总结<br>3、布置课后练习<br>4、组织学生回收器材<br>下课</td>
+                <td style="${cellBorder} text-align: center; font-family: 'Consolas', 'Courier New', monospace; font-size: ${isWordExport ? '10pt' : '13px'}; letter-spacing: 2px;">•   •   •   •   •   •<br>•   •   •   •   •   •<br>•   •   •   •   •   •<br>•   •   •   •   •   •<br>          ▲</td>
+                <td style="${cellBorder} text-align: center;">5</td>
+                <td style="${cellBorder} text-align: center;">小</td>
+            </tr>
+            <tr>
+                <td rowspan="3" style="${labelCell}">预<br>计<br>负<br>荷</td>
+                <td style="${labelCell}">平均心率</td>
+                <td style="${cellBorder} text-align: center;">${d.avg_heart_rate || '138-148 次/分'}</td>
+                <td rowspan="3" style="${labelCell}">心率<br>曲线图</td>
+                <td colspan="3" rowspan="3" style="${cellBorder} text-align: center; vertical-align: middle;">
+                    ${imgTag}
+                </td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">群体运动密度</td>
+                <td style="${cellBorder} text-align: center;">${d.group_density || '≥75%'}</td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">个体运动密度</td>
+                <td style="${cellBorder} text-align: center;">${d.individual_density || '≥50%'}</td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">体育家<br>庭作业</td>
+                <td colspan="6" style="${cellBorder}">${clean(d.homework)}</td>
+            </tr>
+            <tr>
+                <td style="${labelCell}">课后反<br>思</td>
+                <td colspan="6" style="${cellBorder} padding: 24px 8px;">&nbsp;</td>
+            </tr>
+        </table>
+    </div>
+    `;
+}
+
+// ----------------- 4. 导出 Word 文档 (MHTML 独立封装协议，彻底解决图片破损与排版变形) -----------------
+function exportLessonPlanDocx() {
+    if (!currentActiveLessonPlan) {
+        alert('当前没有可导出的教案数据，请先生成教案！');
+        return;
+    }
+    const d = currentActiveLessonPlan;
+    const durationNum = parseInt(d.duration_num || 40, 10);
+    const lvl = d.level || detectLevel(d.class_grade);
+    const chartDataUrl = generateHeartRateDataUrl(durationNum, lvl);
+    const rawBase64 = (chartDataUrl || '').replace(/^data:image\/png;base64,/, '');
+
+    const tableHtml = renderDeyangLessonTableHtml(d, "heart_rate_chart.png", true);
+
+    const mhtmlDoc = `MIME-Version: 1.0
+Content-Type: multipart/related; boundary="----=_NextPart_DEYANG_PE_DOC"
+
+------=_NextPart_DEYANG_PE_DOC
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset='utf-8'>
+<title>德阳市中小学体育与健康课时计划</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+@page Section1 {
+    size: 595.3pt 841.9pt;
+    margin: 1.5cm 1.5cm 1.5cm 1.5cm;
+    mso-header-margin: 36.0pt;
+    mso-footer-margin: 36.0pt;
+    mso-paper-source: 0;
+}
+div.Section1 { page: Section1; }
+body {
+    font-family: '仿宋_GB2312', '仿宋', 'FangSong', 'SimSun', serif;
+    font-size: 10.5pt;
+    color: #000;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1.5pt solid black;
+    mso-border-alt: solid black 1.0pt;
+    mso-table-lspace: 0pt;
+    mso-table-rspace: 0pt;
+}
+td {
+    border: 1.0pt solid black;
+    mso-border-alt: solid black 1.0pt;
+    padding: 4.5pt 6.0pt;
+    font-size: 10.5pt;
+    line-height: 140%;
+}
+</style>
+</head>
+<body>
+<div class="Section1">
+${tableHtml}
+</div>
+</body>
+</html>
+
+------=_NextPart_DEYANG_PE_DOC
+Content-Type: image/png
+Content-Transfer-Encoding: base64
+Content-Location: heart_rate_chart.png
+
+${rawBase64}
+------=_NextPart_DEYANG_PE_DOC--
+`;
+
+    const blob = new Blob([mhtmlDoc], { type: 'application/msword;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `德阳市课时计划_${d.topic_name || '教案'}_${lvl}.doc`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`📥 已导出《德阳市课时计划_${d.topic_name || '教案'}_${lvl}.doc》！Word 打开格式与预览完全一致。`);
+}
+
+function exportUnitPlanDocx() {
+    if (!currentActiveUnitPlan) {
+        alert('当前没有可导出的大单元数据，请先生成大单元！');
+        return;
+    }
+    const u = currentActiveUnitPlan;
+    const lessons = u.lessons || [];
+
+    let lessonsRows = lessons.map(l => `
+        <tr>
+            <td style="border:1pt solid black; text-align:center; padding:6pt; font-weight:bold;">${l.seq}</td>
+            <td style="border:1pt solid black; padding:6pt;"><b>【内容】</b>${l.content}<br><b>【难点】</b>${l.key_point}</td>
+            <td style="border:1pt solid black; padding:6pt;">${l.methods}</td>
+            <td style="border:1pt solid black; padding:6pt;">${l.literacy}</td>
+        </tr>
+    `).join('');
+
+    const docContent = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head>
+    <meta charset='utf-8'>
+    <title>大单元教学计划</title>
+    <!--[if gte mso 9]>
+    <xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml>
+    <![endif]-->
+    <style>
+    @page Section1 { size: 595.3pt 841.9pt; margin: 1.8cm 1.8cm 1.8cm 1.8cm; }
+    div.Section1 { page: Section1; }
+    body { font-family: '仿宋', 'FangSong', 'SimSun', serif; font-size: 11pt; line-height: 1.5; }
+    table { border-collapse: collapse; width: 100%; border: 1.5pt solid black; }
+    td, th { border: 1pt solid black; padding: 5pt; }
+    </style>
+    </head>
+    <body>
+    <div class="Section1">
+        <h2 style="text-align:center; font-family:'黑体'; font-size:16pt; margin-bottom:6pt;">《${u.unit_title}》大单元教学计划</h2>
+        <div style="text-align:center; font-size:10.5pt; margin-bottom:12pt; color:#444;">
+            适用学段/年级：${u.grade} &nbsp;&nbsp;&nbsp;&nbsp; 总课时：${u.total_hours} 课时 &nbsp;&nbsp;&nbsp;&nbsp; 方案制定：体育教研组
+        </div>
+        <table>
+            <tr>
+                <td style="width:18%; font-weight:bold; text-align:center; background:#FAFAFA; font-family:'黑体';">大单元设计理念</td>
+                <td style="padding:6pt;">${u.concept}</td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; text-align:center; background:#FAFAFA; font-family:'黑体';">大单元教学目标</td>
+                <td style="padding:6pt; white-space:pre-line;">${u.goals}</td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold; text-align:center; background:#FAFAFA; font-family:'黑体';">考核评价要点</td>
+                <td style="padding:6pt; white-space:pre-line;">${u.evaluation}</td>
+            </tr>
+        </table>
+        <h3 style="font-family:'黑体'; font-size:13pt; margin-top:14pt; margin-bottom:6pt;">课时分步实施安排</h3>
+        <table>
+            <tr style="background:#F2F2F2; font-family:'黑体'; font-weight:bold; text-align:center;">
+                <th style="width:12%;">课次</th>
+                <th style="width:36%;">学习内容与重难点</th>
+                <th style="width:34%;">主要教与学及比赛策略</th>
+                <th style="width:18%;">核心素养达成要点</th>
+            </tr>
+            ${lessonsRows}
+        </table>
+    </div>
+    </body>
+    </html>
+    `;
+
+    const blob = new Blob(['\ufeff' + docContent], { type: 'application/msword;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `大单元教学计划_${u.unit_title}.doc`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`📥 已导出《大单元教学计划_${u.unit_title}.doc》！`);
+}
+
+function printLessonPlanTable() {
+    const content = document.getElementById('lessonPlanTableWrapper').innerHTML;
+    const win = window.open('', '_blank');
+    win.document.write(`
+        <html>
+        <head>
+            <title>打印教案</title>
+            <style>
+                body { margin: 10px; font-family: 'FangSong', 'SimSun', serif; }
+                @media print { button { display: none; } }
+            </style>
+        </head>
+        <body onload="window.print(); window.close();">
+            ${content}
+        </body>
+        </html>
+    `);
+    win.document.close();
+}
+
+// ----------------- 档案库展示与管理 -----------------
+function renderLessonArchiveList() {
+    const st = getLessonStorage();
+    const lListEl = document.getElementById('lessonArchiveLessonList');
+    const uListEl = document.getElementById('lessonArchiveUnitList');
+
+    if (lListEl) {
+        if (!st.lessons || st.lessons.length === 0) {
+            lListEl.innerHTML = `<div style="text-align:center; color:#999; padding:20px; font-size:13px;">暂无已保存的课时教案，在“课时计划生成”中生成后将自动归档。</div>`;
+        } else {
+            lListEl.innerHTML = st.lessons.map((l, i) => `
+                <div style="background:#fff; border:1px solid #E2E8F0; border-radius:10px; padding:10px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <div style="font-size:14px; font-weight:800; color:#1E40AF;">📄 ${l.topic_name || '体育课时教案'}</div>
+                        <div style="font-size:11px; color:#64748B; margin-top:2px;">
+                            ${l.class_grade || ''} · ${l.lesson_seq || ''} · 教师: ${l.teacher_name || ''} · ${l.savedAt || ''}
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn-blue" style="padding:4px 10px; font-size:12px; margin:0;" onclick="loadArchiveLesson(${i})">👁️ 调出预览</button>
+                        <button class="btn-danger-sys" style="padding:4px 8px; font-size:12px; margin:0;" onclick="deleteArchiveLesson(${i})">🗑️ 删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    if (uListEl) {
+        if (!st.units || st.units.length === 0) {
+            uListEl.innerHTML = `<div style="text-align:center; color:#999; padding:20px; font-size:13px;">暂无已保存的大单元教学计划，在“大单元设计”中生成后将自动归档。</div>`;
+        } else {
+            uListEl.innerHTML = st.units.map((u, i) => `
+                <div style="background:#fff; border:1px solid #E2E8F0; border-radius:10px; padding:10px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <div style="font-size:14px; font-weight:800; color:#7E22CE;">📚 《${u.unit_title}》大单元设计</div>
+                        <div style="font-size:11px; color:#64748B; margin-top:2px;">
+                            ${u.grade || ''} · 共 ${u.total_hours || (u.lessons && u.lessons.length)} 课时 · ${u.savedAt || ''}
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn-purple" style="padding:4px 10px; font-size:12px; margin:0; background:#7E22CE;" onclick="loadArchiveUnit(${i})">👁️ 调阅计划</button>
+                        <button class="btn-danger-sys" style="padding:4px 8px; font-size:12px; margin:0;" onclick="deleteArchiveUnit(${i})">🗑️ 删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+}
+
+function loadArchiveLesson(idx) {
+    const st = getLessonStorage();
+    const l = st.lessons[idx];
+    if (!l) return;
+    currentActiveLessonPlan = l;
+    displayLessonPlanResult(l);
+    switchLessonSubTab('plan');
+    showToast(`👁️ 已成功调阅《${l.topic_name}》教案！`);
+}
+
+function deleteArchiveLesson(idx) {
+    if (!confirm('确定要删除这份课时教案档案吗？')) return;
+    const st = getLessonStorage();
+    st.lessons.splice(idx, 1);
+    saveLessonStorage(st);
+    renderLessonArchiveList();
+    showToast('已删除该教案档案');
+}
+
+function loadArchiveUnit(idx) {
+    const st = getLessonStorage();
+    const u = st.units[idx];
+    if (!u) return;
+    currentActiveUnitPlan = u;
+    displayUnitPlanResult(u);
+    refreshLessonUnitLinkBar();
+    switchLessonSubTab('unit');
+    showToast(`👁️ 已调出《${u.unit_title}》大单元计划！`);
+}
+
+function deleteArchiveUnit(idx) {
+    if (!confirm('确定要删除这份大单元教学计划吗？')) return;
+    const st = getLessonStorage();
+    st.units.splice(idx, 1);
+    saveLessonStorage(st);
+    renderLessonArchiveList();
+    refreshLessonUnitLinkBar();
+    showToast('已删除该大单元计划');
+}
+
+// ----------------- 新课标专家知识库与自适应生成引擎 -----------------
+function detectLevel(text) {
+    const t = String(text || '');
+    if (t.includes('水平五') || t.includes('高') || /高[一二三123]/.test(t) || /3[123]/.test(t)) return '水平五';
+    if (t.includes('水平四') || t.includes('初') || /七|八|九|[789]年级/.test(t) || /2[123]/.test(t)) return '水平四';
+    if (t.includes('水平三') || /五|六|[56]年级/.test(t) || /1[56]/.test(t)) return '水平三';
+    if (t.includes('水平二') || /三|四|[34]年级/.test(t) || /1[34]/.test(t)) return '水平二';
+    if (t.includes('水平一') || /一|二|[12]年级/.test(t) || /1[12]/.test(t)) return '水平一';
+    return '水平四';
+}
+
+// ----------------- 精细化运动项目与动作主题识别 -----------------
+function detectSportDetail(text) {
+    const t = String(text || '').toLowerCase();
+    if (/羽毛球|羽球|颠球|高远球|杀球|吊球|网前|挑球|搓球/.test(t)) return 'badminton';
+    if (/乒乓球|乒乓|推挡|正手攻球|削球|弧圈球/.test(t)) return 'tabletennis';
+    if (/篮球|运球|投篮|上篮|传切|挡拆|三步上篮|变向/.test(t)) return 'basketball';
+    if (/足球|脚内侧|脚背|射门|颠球|二过一|踢球|脚弓/.test(t)) return 'football';
+    if (/排球|垫球|传球|发球|扣球|拦网|中一二/.test(t)) return 'volleyball';
+    if (/耐久跑|800米|1000米|中长跑|长跑|呼吸节奏|极点/.test(t)) return 'run_endurance';
+    if (/起跑|加速跑|途中跑|冲刺|接力|步频|步幅|快速跑|短跑|50米跑/.test(t)) return 'run_sprint';
+    if (/跳远|跳高|立定跳|三级跳|跳跃|跨越|急行跳远/.test(t)) return 'jump';
+    if (/投掷|实心球|铅球|垒球|标枪|推铅球|双手头上/.test(t)) return 'throw';
+    if (/体操|技巧|滚翻|前滚翻|后滚翻|肩肘倒立|分腿腾越|山羊|跳箱/.test(t)) return 'gymnastics';
+    if (/武术|五步拳|少年拳|连环拳|抱拳|长拳|步型/.test(t)) return 'wushu';
+    if (/跳绳|花样跳绳|双摇|单摇|并脚跳|摇绳/.test(t)) return 'rope';
+    return 'general';
+}
+
+// ----------------- 智能场地器材自适应生成 -----------------
+function getSmartVenueAndEquipment(sport, level) {
+    switch (sport) {
+        case 'badminton':
+            return '标准室内/室外羽毛球场4-6片、羽毛球拍42支、训练羽毛球若干筒(每组1筒)、球网、标志碟20个、多媒体音响1台';
+        case 'tabletennis':
+            return '标准室内乒乓球台10-12张、乒乓球拍42支、训练乒乓球若干筐、多球拦球网、记分牌、多媒体音响1台';
+        case 'basketball':
+            return '标准篮球场2块、标准篮球42个、标志桶16个、训练背心4组(红黄蓝绿)、发令哨1个、便携战术板1块';
+        case 'football':
+            return '标准足球场1块、5号足球42个、便携小球门4个、标志碟40个、敏捷梯2条、发令哨1个、音响1台';
+        case 'volleyball':
+            return '标准排球场2块、排球网2张、软式/硬式排球42个、标志桶8个、发令哨1个、多媒体音响1台';
+        case 'run_sprint':
+            return '标准塑胶跑道、接力棒8根、起跑器若干、发令笛1个、标志碟40个、电子秒表2块、发令旗1面';
+        case 'run_endurance':
+            return '标准跑道/校园自然地形跑道、计时秒表4块、心率监测手环/脉搏测算表、急救保障箱、温开水补水站';
+        case 'jump':
+            return '沙坑2处(已提前翻松平整)、平沙耙2把、起跳板、钢卷尺2把、彩色标志碟若干、跳高垫2组、发令哨1个';
+        case 'throw':
+            return '标准投掷区/平整草坪、2kg实心球/铅球42个、皮尺2把、安全警示标志旗若干、发令哨1个';
+        case 'gymnastics':
+            return '体操大垫子8张、小海绵垫20张、保护软垫4块、支撑跳跃山羊/跳箱、多媒体音响1台';
+        case 'wushu':
+            return '平整武术场地/室内体育馆、武术垫若干、腰带/武术服、多媒体教学音响、动作挂图展架';
+        case 'rope':
+            return '平整防滑场地、专业计数跳绳44根、电子秒表2块、节奏音乐播放器1台';
+        default:
+            return '标准田径场/运动场、多功能标志桶16个、标志碟40个、发令哨1个、多媒体音响1台';
+    }
+}
+
+// ----------------- 智能安全保障措施自适应 -----------------
+function getSmartSafetyAssurance(sport, level) {
+    switch (sport) {
+        case 'badminton':
+        case 'tabletennis':
+            return '1. 课前严格检查球拍拍框、胶皮、拍线及场地防滑平整度，全员清空口袋钥匙坚硬异物；\n2. 练习时严格固定站位与挥拍安全间距（2.5米以上），严禁无球状态下向他人方向随意挥拍；\n3. 捡球时统一听口令、严禁在他人挥拍击球路线上穿行抢球。';
+        case 'basketball':
+            return '1. 课前严格检查篮球充气度及场地防滑，全员剪短指甲、清空口袋硬物与随身饰品；\n2. 练习中控制身体对抗冲撞，严禁推搡、拉扯和过分危险动作；\n3. 运球练习同向推进，保持3米安全车距，终点留足缓冲减速区。';
+        case 'football':
+            return '1. 课前检查鞋带系紧，清空口袋硬物，平整场地无碎石；\n2. 传接球练习两两相对，保持5-8米合理间距，注意观察来球路线；\n3. 射门练习必须在球门后无人的情况下进行，严禁对着人群大脚盲目开球。';
+        case 'volleyball':
+            return '1. 课前检查球网牢固度与球压，做好指腕关节与下肢大肌群动态牵拉；\n2. 垫球和传球时注意与同伴呼应，防止跑动抢球发生头部或肢体碰撞；\n3. 练习后排保护救球时注意规范缓冲姿态，防止挫伤手指或擦伤膝关节。';
+        case 'run_sprint':
+            return '1. 课前严格检查跑道平整度，安排见习生担任安全观察员；\n2. 练习严格分道同向跑动，严禁串道或折返穿行；\n3. 终点线后设置15米以上充分减速缓冲带，严禁冲刺后急停导致摔伤。';
+        case 'run_endurance':
+            return '1. 课前详细排查学生健康状况与既往病史，安排身体不适学生见习；\n2. 跑步过程中指导学生通过即刻心率调控跑速，严禁空腹或过度疲劳奔跑；\n3. 跑后严禁立即静止坐卧，必须由教师带领进行慢走与深层排酸拉伸。';
+        case 'jump':
+            return '1. 课前彻底翻松平整沙坑，清除石块坚硬杂物，踏跳板平整稳固；\n2. 严格按次序轮流助跑起跳，上一名同学完全离开沙坑后下一名方可起跑；\n3. 落地严格执行屈膝深缓冲，严禁单腿僵直着地或后坐冲击尾椎。';
+        case 'throw':
+            return '1. 严格划定投掷区与安全落地区，投掷线前方及落地区绝对禁止站人；\n2. 实行“统一听口令投掷、统一听口令捡球”军纪化管理，严禁擅自跑出投掷线；\n3. 捡球后必须双手抱球走回，严禁将球反向抛掷传递。';
+        case 'gymnastics':
+            return '1. 严格检查垫子拼接紧密度与软硬平整度，垫缝之间严禁留有空隙；\n2. 落实同伴“保护与帮助”专人负责制，未安排保护严禁擅自上器械；\n3. 滚翻动作强调低头含胸团身，严禁头顶或颈部直接垂直撞垫。';
+        case 'wushu':
+            return '1. 练习前充分活动各关节韧带，尤其做好下肢跨髋与膝踝关节牵拉；\n2. 冲拳推掌与踢腿练习保持两臂以上安全散开间隔，严禁嬉戏打闹；\n3. 两人对拆学练时严格按照慢速空击与虚触规范，严禁真打发力伤人。';
+        case 'rope':
+            return '1. 保持人均前后左右2米以上宽敞间隔，严禁甩绳抽打到他人；\n2. 着防滑运动鞋，前脚掌着地轻柔缓冲，严禁全脚掌或脚后跟重力跺地震伤膝盖；\n3. 摇绳手腕发力，大臂收拢，避免大臂大幅度抡绳造成体力快速衰竭。';
+        default:
+            return '1. 课前严格检查场地平整度及器材牢固度，全员清空口袋钥匙坚硬异物；\n2. 练习中时刻与同伴保持合理安全间距（3米以上）；\n3. 终点后设置充足减速缓冲带，严禁冲刺后急停撞人。';
+    }
+}
+
+// ----------------- 准备部分专项热身自适应生成 -----------------
+function getSmartPrepContent(sport, skillName, level) {
+    let warmupRun = "";
+    let stretchMove = "";
+    let gameMove = "";
+
+    switch (sport) {
+        case 'badminton':
+            warmupRun = "行进间步法热身跑（慢跑穿插并步滑步、交叉步、前后快速碎步变向移动，各2组×15米）";
+            stretchMove = "持拍手腕绕环、肩胸深层展拉、弓步侧向转体、下肢踝关节动态激活（4×8拍）";
+            gameMove = "双人持拍球感互动热身：持拍平托球移动接力或双人互抛羽毛球反应小游戏";
+            break;
+        case 'tabletennis':
+            warmupRun = "行进间灵敏滑步跑（侧滑步、交叉步跨步移动，各2组×15米）";
+            stretchMove = "腰部转体绕环、握拍手腕屈伸、肩背牵拉及膝关节活动（4×8拍）";
+            gameMove = "持拍端球平衡行进赛与反应接落球游戏";
+            break;
+        case 'basketball':
+            warmupRun = "行进间球性热身跑（慢跑穿插高抬腿、侧滑步、后撤步变向冲刺，各2组×20米）";
+            stretchMove = "手指拨球腰部绕环、扩胸振臂、弓步压腿转体、活动踝关节（4×8拍）";
+            gameMove = "原地体前双手快速交替拨球与听哨音抓球反应游戏";
+            break;
+        case 'football':
+            warmupRun = "蛇形慢跑变向（跑动中穿插交叉步、跨步跳、后踢腿跑，各2组×20米）";
+            stretchMove = "展髋外摆腿、大腿后群动态牵拉、弓步转体、活动膝踝（4×8拍）";
+            gameMove = "双人行进间脚内侧轻揉球与轻踩球互动热身";
+            break;
+        case 'volleyball':
+            warmupRun = "排球专项移动步法跑（并步、跨步、滑步变向结合双臂前伸垫击模仿，各2组×15米）";
+            stretchMove = "肩关节大绕环、两臂平展夹紧前伸、胸腰后仰挺身、腕指活动（4×8拍）";
+            gameMove = "双人托抛软式排球/气球空中不落地反应热身游戏";
+            break;
+        case 'run_sprint':
+            warmupRun = "慢跑中行进间专门跑练习（小步跑、高抬腿跑、后蹬跑、加速冲刺跑各2组×20米）";
+            stretchMove = "大幅度屈臂前后摆动、弓步压腿大腿前后群拉伸、踝关节快速提踵（4×8拍）";
+            gameMove = "听信号快速起动反应游戏（背向站立听声转体起跑）";
+            break;
+        case 'run_endurance':
+            warmupRun = "节奏慢跑体验（自然深呼吸跟随跑圈，重点体会步频呼吸节律 400米）";
+            stretchMove = "小腿腓肠肌深层静态拉伸、大腿股四头肌牵拉、扩胸展肩深呼吸（4×8拍）";
+            gameMove = "配速体验小游戏：按指定心率区间均匀慢跑配对打卡";
+            break;
+        case 'jump':
+            warmupRun = "单双脚交替弹跳跑（小步跳、跨步跳跃、轻快纵跳，各2组×15米）";
+            stretchMove = "下肢髋膝踝三关节功能拉伸、屈膝下蹲挺身、躯干核心肌群激活（4×8拍）";
+            gameMove = "小青蛙跳荷叶：双脚连续轻巧跳过标志碟游戏";
+            break;
+        case 'throw':
+            warmupRun = "侧向交叉步跑与小步加速跑（穿插双臂大幅绕环扩胸，各2组×20米）";
+            stretchMove = "背弓挺胸拉伸、肩袖肌群动态抗阻牵拉、转髋转体动作体会（4×8拍）";
+            gameMove = "双手互抛轻沙包/小皮球体会腰腹蹬地发力游戏";
+            break;
+        case 'gymnastics':
+            warmupRun = "垫上四周慢跑变向（穿插脚尖走、高抬腿、轻盈小步跳，各2组×15米）";
+            stretchMove = "头颈部轻柔绕环、脊柱灵活性猫式伸展、直腿坐位体前屈压腿（4×8拍）";
+            gameMove = "垫上团身前后左右摇船滚动与小动物爬行模仿游戏";
+            break;
+        case 'wushu':
+            warmupRun = "慢跑中穿插侧滑步、马步走、提膝转体走（各2组×15米）";
+            stretchMove = "正踢腿、斜踢腿、马步与弓步压腿、仆步下压拉伸（4×8拍）";
+            gameMove = "原地抱拳冲拳发声配合气势热身游戏";
+            break;
+        case 'rope':
+            warmupRun = "前脚掌轻弹慢跑（体会踝关节快速缓冲弹性，各2组×15米）";
+            stretchMove = "手腕脚踝关节灵动操、小腿腓肠肌牵拉、肩背放松活动（4×8拍）";
+            gameMove = "手腕快速空摇绳卡点节拍律动小游戏";
+            break;
+        default:
+            warmupRun = "行进间慢跑穿插侧滑步、交叉步、后踢腿跑各2组×20米";
+            stretchMove = "头部运动、扩胸展肩、弓步压腿转体、手腕脚踝活动（4×8拍）";
+            gameMove = "原地听哨音反应折返抢位小游戏";
+            break;
+    }
+
+    return `一、课堂常规（2分钟）：\n1. 集合整队，体委清点并报告出勤人数，师生问好，检查着装鞋带，安排见习生。\n2. 宣布本节课教学主题《${skillName}》、课时目标与安全防护纪律。\n\n二、专项功能性热身（6分钟）：\n1. ${warmupRun}。\n2. 专项动态功能操：${stretchMove}。\n3. 专项球性/动作感觉激活：${gameMove}。`;
+}
+
+// ----------------- 基本部分深度自适应生成 -----------------
+function getSmartBaseContent(sport, skillName, level, stage, req, durationNum) {
+    const isHigh = durationNum === 45 || level === '水平五';
+
+    let formula = "";
+    let question = "";
+    let drill1 = "";
+    let drill2 = "";
+    let drill3 = "";
+    let game = "";
+    let conditioning = "";
+
+    switch (sport) {
+        case 'badminton':
+            formula = "握拍放松指留空，拍面平稳微前送，球击甜区轻弹起，手腕柔和控高低";
+            question = "当球弹起方向偏前或偏后时，应如何微调拍面倾角与手腕迎球时机？";
+            drill1 = `原地持拍静态与慢速控球练：双脚开立屈膝，用球拍甜区向上做${skillName}动作，控制反弹高度在头部上方30-50cm（每人30次×3组）`;
+            drill2 = `高低变异与行进间移动练：原地“一次低球接一次高球”体会力量调控，随后沿场地单打线慢步前行完成动作（每人4组×15米）`;
+            drill3 = `双人结对对击与小场地限定区域练：两人一组相距3-4米，连续平稳对控送球，挑战多回合不掉地（每人5组）`;
+            game = `【羽球${skillName}擂台争霸赛】：全班分为4组展开比拼，在规定1分钟内计算连续控球不落地的最高回合数，组内优胜者进入全班总决选，人人参与角逐！`;
+            conditioning = `【羽毛球灵敏步法与下肢爆发力循环】（Tabata 20秒强练/10秒间歇，2组）：\n1. 米字移动步法快速折返触标志碟 20秒；\n2. 原地双脚深蹲起跳（发展起跳截击爆发力） 20秒；\n3. 俯卧平板支撑核心抗扭转 20秒。`;
+            break;
+
+        case 'tabletennis':
+            formula = "迎球引拍腰发力，拍面前倾击球中，手腕稳定向前送，快速还原步法灵";
+            question = "来球弧线过高或过低时，击球点与拍面角度该如何做动态调整？";
+            drill1 = `原地徒手挥拍动作定型与托颠球学练：动作轨迹规范，体会前臂与手腕发力（每人40次×2组）`;
+            drill2 = `单球台多球供球针对性学练：教师或组长有序发多球，练习者准确击球入台（每人20球×3组）`;
+            drill3 = `两人一组一推一挡多回合对练：控制出球弧线与速度，追求多回合稳定过网（每人4组）`;
+            game = `【乒乓多回合守擂挑战赛】：两人一组台前对攻，连续打满10回合积1分，争夺“班级控球小球星”荣誉称号。`;
+            conditioning = `【小球专项侧向步法与核心力量】：敏捷侧向滑步 20秒 + 原地波比跳 20秒 + 仰卧转体 20秒（Tabata 2组）。`;
+            break;
+
+        case 'basketball':
+            formula = "降重心、按外侧、快蹬跨、侧身护";
+            question = "在防守人紧逼防守时，如何利用假动作与重心欺骗制造变向突破空间？";
+            drill1 = `原地技术细节定型练习：规范体会发力手型与球的行进轨迹（每人30次×2组）`;
+            drill2 = `行进间绕标志桶阻碍突破学练：设置间距3米的标志物，体会加速蹬地与动作衔接（每人4组×15米）`;
+            drill3 = `半场结构化防守攻防演练：防守队员由消极防守过渡到半积极防守，进攻队员果断完成技术突破（每人6组）`;
+            game = `【半场3v3限制性实战对抗赛】：防守方人盯人，进攻方必须至少运用一次本课核心动作后方可终结进攻，人人上场参与实战。`;
+            conditioning = `【篮球专项防守脚步与弹跳循环】：快速侧滑步接单脚制动 20秒 + 纵跳摸高 20秒 + 核心两头起 20秒。`;
+            break;
+
+        case 'football':
+            formula = "助跑自然选角度，支撑脚立球侧旁，展髋带动摆动腿，击球后中顺送出";
+            question = "支撑脚脚尖朝向与触球瞬间踝关节紧张度对出球精度有何决定性影响？";
+            drill1 = `原地踩球模仿与两人一组一人踩球一人体会击球部位练习（每人25次×2组）`;
+            drill2 = `两人相距6-8米相向对传接球：要求一停一传、顺势迎球（每人40次）`;
+            drill3 = `行进间传接球过障碍与踢墙配合练：两人一组沿跑道边跑边传（每人4组×20米）`;
+            game = `【五人制小场地四门踢准对抗赛】：场地设4个小球门，传准3脚方可起脚射门，培养快速出球传接战术意识。`;
+            conditioning = `【足球专项敏捷脚步与腿部力量】：敏捷梯快速碎步跑 20秒 + 侧向深蹲跳 20秒 + 平板支撑 20秒。`;
+            break;
+
+        case 'volleyball':
+            formula = "插夹提移蹬，两臂夹紧平，迎球顺后引，协调用力送";
+            question = "面对不同弧度与速度的来球，如何迅速通过脚步移动使身体处于球的正后下方？";
+            drill1 = `徒手模仿垫球手型与自抛自垫高度体会（每人25次×2组）`;
+            drill2 = `双人结对一抛一垫与连续自垫球练习：一人抛准一人平稳垫回同伴手中（每人30次交替）`;
+            drill3 = `隔网二人对垫球配合练习：控制垫球高度过网，同伴积极呼应接起（每人4组）`;
+            game = `【隔网排球多回合吉尼斯挑战】：全班分组展开隔网对打，以连续过网不落地最高回合数决出优胜小组。`;
+            conditioning = `【排球弹跳与上肢核心力量】：并步移动摸高跳 20秒 + 俯卧两头起 20秒 + 核心卷腹 20秒。`;
+            break;
+
+        case 'run_sprint':
+            formula = "前倾蹬地积极迈，大腿高抬后蹬足，双臂屈肘前后摆，冲刺过线不减速";
+            question = "起跑后前几步为什么不能过早抬头直立身体？重心如何实现自然抬起？";
+            drill1 = `原地听口令快速起动反应与起跑发力体会（每人6次×3组）`;
+            drill2 = `逐渐拉大间距的标志碟节奏加速跑：体会步频与步幅的自然演进（每人4组×25米）`;
+            drill3 = `行进间途中跑大步幅冲刺与终点撞线技术串联（每人3组×40米）`;
+            game = `【4×30米让距迎面接力速度对抗赛】：全班分为4队，设置让距机制，比一比哪队接棒默契、冲刺坚决。`;
+            conditioning = `【短跑下肢爆发力与核心循环】：高抬腿极速点地 20秒 + 立定跳远收腹跳 20秒 + 仰卧核心转体 20秒。`;
+            break;
+
+        case 'run_endurance':
+            formula = "跑姿正直微前倾，两步一呼两步吸，步频节奏保持稳，克服极点意志坚";
+            question = "当“极点”现象（呼吸困难、双腿沉重）出现时，应采取哪些积极生理与心理调控策略？";
+            drill1 = `步频与呼吸协同练习：操场慢跑中严格执行“两步一呼、两步一吸”节律（慢跑600米）`;
+            drill2 = `定速巡航跑与同伴跟跑破风战术学练：两人一组轮流领跑，保持稳定配速（800米）`;
+            drill3 = `弯道切线跑与直道最后150米加速冲刺练习（每人2组）`;
+            game = `【校园趣味定向越野找点挑战赛】：在校园安全区域设置打卡点，考验团队体力分配与匀速跑战术运用。`;
+            conditioning = `【耐力心肺强化与腿部肌肉耐力】：变速原地高抬腿 20秒 + 原地开合跳 20秒 + 登山跑 20秒。`;
+            break;
+
+        case 'jump':
+            formula = "预摆展体屈膝蹲，蹬地起跳双臂扬，空中收腹腿前伸，屈膝缓冲平稳落";
+            question = "起跳蹬地瞬间，双臂向前上方摆动对提高起跳高度和远度起什么作用？";
+            drill1 = `原地双臂预摆与屈膝下蹲协同发力体会（每人15次×2组）`;
+            drill2 = `起跳过低障碍物练习：体会腾空展体与空中收腹动作（每人6组）`;
+            drill3 = `沙坑/软垫落地缓冲动作雕琢：脚跟先着地顺势屈膝深蹲缓冲（每人6组）`;
+            game = `【跳跃小达人远度进阶打卡赛】：地面以10cm递进设置彩色标志带，挑战个人最好跃进成绩！`;
+            conditioning = `【下肢三关节爆发力与核心力量】：连续蛙跳 20秒 + 双脚纵跳摸高 20秒 + 仰卧两头起 20秒。`;
+            break;
+
+        case 'throw':
+            formula = "五指托球锁锁骨，蹬地转髋挺胸弓，自下而上力连贯，推拨充分肘抬平";
+            question = "为什么仅仅依靠手臂力量无法掷出远度？如何将下肢蹬地力量顺畅传导至手指？";
+            drill1 = `徒手体会自下而上发力顺序：蹬地、转髋、挺胸、推手分解练习（每人15次×2组）`;
+            drill2 = `双手持球推掷动作定型：控制出手角度在38°-42°之间（每人12次×2组）`;
+            drill3 = `完整投掷动作连贯练习，统一听发令哨音投掷与统一捡球（每人6组）`;
+            game = `【大力士投准与掷远达标赛】：设置不同分值落地区域，兼顾出手角度与远度综合得分比拼。`;
+            conditioning = `【上肢推力与躯干核心肌群】：俯卧撑推起击掌 20秒 + 仰卧挺髋两头起 20秒 + 平板支撑 20秒。`;
+            break;
+
+        case 'gymnastics':
+            formula = "两手撑垫肩同宽，屈臂低头团身紧，后脑着垫滚圆滑，顺势抱膝轻起立";
+            question = "滚翻过程中如果身体松散不团身，滚动会出现什么问题？如何保护头颈安全？";
+            drill1 = `垫上抱膝团身前后左右摇船滚动体会（每人20次×2组）`;
+            drill2 = `下颌夹手帕/标志贴低头滚翻练习：强制形成低头含胸动力定型（每人6组）`;
+            drill3 = `同伴保护与帮助下完成完整动作及分腿展姿展示（每人6组）`;
+            game = `【技巧小明星成套动作风采展】：将滚翻与平衡起立组合展示，评选动作最轻盈优美标兵。`;
+            conditioning = `【躯干核心柔韧与平衡力量】：直腿坐位控腹 20秒 + 俯卧挺身背飞 20秒 + 静态单腿平衡 20秒。`;
+            break;
+
+        case 'wushu':
+            formula = "立掌平正拳紧握，弓步前腿大腿平，马步沉髋立上身，手眼相随精气神";
+            question = "步型转换时（如弓步转马步），重心如何平稳移动而不发生上下起伏晃动？";
+            drill1 = `基本手型与手法分解练习：冲拳、推掌、架拳定型（每人30次×2组）`;
+            drill2 = `桩功步型转换练习：弓步、马步、仆步连贯切换（每人15次交替）`;
+            drill3 = `段落套路连贯组合练习：步法与手法协同发力，配合发声呼号（每人4组）`;
+            game = `【少年武者精气神擂台对抗赛】：小组轮流登台展示，比一比哪组步法最稳、动作最刚劲、神采最飞扬！`;
+            conditioning = `【下肢桩功耐力与核心抗扭转】：静态马步桩功坚持 30秒 + 原地踢腿 20秒 + 仰卧举腿 20秒。`;
+            break;
+
+        case 'rope':
+            formula = "大臂贴腰手腕抖，前脚轻点膝微屈，起跳节奏随绳转，呼吸均匀耐力强";
+            question = "长时间快速跳绳时，怎样减少体能过度损耗并避免脚踝受伤？";
+            drill1 = `徒手空摇绳手腕抖动发力节奏练习（每人1分钟×2组）`;
+            drill2 = `单摇跳与节奏连贯性练习：听节拍音乐平稳跳跃（每人100次×3组）`;
+            drill3 = `花样变式跳绳学练（交叉跳/双摇跳/单脚交替跳进阶）（每人4组）`;
+            game = `【1分钟极速跳绳挑战争霸赛】：挑战个人最高计数纪录，争夺“跳绳飞人”荣誉勋章。`;
+            conditioning = `【踝关节弹力与无氧心肺】：高频原地碎步跳 20秒 + 开合跳 20秒 + 波比跳 20秒。`;
+            break;
+
+        default:
+            formula = "动作规范重心稳，动作协调节奏明，同伴互助多练习，勇于突破战极限";
+            question = "在实战情境中，如何根据对手动作做出快速预判与合理应对？";
+            drill1 = `基础动作分解定型与本体感觉体验练习（每人20次×2组）`;
+            drill2 = `行进间动作连贯性与组合技术强化练习（每人4组×15米）`;
+            drill3 = `小场地情境对抗与协同应用练习（每人5组）`;
+            game = `【班级团队技能趣味挑战赛】：各组轮流上场角逐，检验技能实战运用能力与合作凝聚力。`;
+            conditioning = `【综合体能素质提升循环】：深蹲跳 20秒 + 开合跳 20秒 + 核心平板支撑 20秒。`;
+            break;
+    }
+
+    return `一、技术细节精讲与标准实战示范（${isHigh ? '5' : '4'}分钟）：\n1. 教师做专业水准的完整动作示范（正面、侧面各2次），提炼发力动作口诀：“${formula}”；\n2. 设疑启发探究：“${question}”\n\n二、循序渐进结构化学练进阶（${isHigh ? '17' : '14'}分钟）：\n1. 原地动作动力定型强化：${drill1}；\n2. 移动加阻与组合衔接练：${drill2}；\n3. 变异情境与实战模拟练习：${drill3}。\n\n三、情境化教学比赛 / 技能对抗挑战赛（${isHigh ? '6' : '5'}分钟）：\n组织开展${game}\n\n四、补偿性专项体能课课练（4分钟）：\n${conditioning}`;
+}
+
+// ----------------- 重构版内置新课标专家课时教案生成器 -----------------
+function generateExpertLessonPlan(params) {
+    const { topic, teacher, time, seq, stage, grade, count, duration, equip, req } = params;
+    const level = params.level || detectLevel(grade);
+    const durNum = parseInt(duration, 10) || (level === '水平五' ? 45 : 40);
+
+    // 智能提取运动项目与核心动作技能点
+    const sport = detectSportDetail(topic + ' ' + (req || ''));
+    let skillName = topic.trim();
+    if (skillName.includes('：')) {
+        const parts = skillName.split('：');
+        skillName = parts[1] || parts[0];
+    } else if (skillName.includes(':')) {
+        const parts = skillName.split(':');
+        skillName = parts[1] || parts[0];
+    }
+
+    // 智能推断或采用场地器材与安全保障
+    let finalEquip = equip;
+    if (!finalEquip || (finalEquip.includes('标准跑道、标志桶8个') && sport !== 'run_sprint')) {
+        finalEquip = getSmartVenueAndEquipment(sport, level);
+    }
+    const safety_assurance = getSmartSafetyAssurance(sport, level);
+
+    // 核心素养三维目标根据运动项目和水平层次定制
+    let motor_ability = "";
+    let health_behavior = "";
+    let sports_morality = "";
+    let avg_heart_rate = "";
+
+    if (level === '水平一') {
+        avg_heart_rate = "120-130 次/分";
+        motor_ability = `1. 在童趣情境与趣味游戏中体验【${skillName}】的基础身体姿态与动作感受，能说出动作形象名称；2. 动作自然放松、手脚身体协调，发展柔韧、平衡与灵敏等基本身体活动能力。`;
+        health_behavior = `1. 课前自觉检查服装鞋带，清空口袋坚硬异物，听从教师哨音与口令迅速集合归队；2. 运动出汗后懂得及时保暖避风，学会听身体信号并排队适量补水，乐于参加阳光体育游戏。`;
+        sports_morality = `1. 体验体育游戏的快乐，在活动中排队礼貌轮流玩、不推搡争抢器材；2. 能和小伙伴友好协作完成游戏小任务，遇到轻微碰撞或落后不哭闹气馁。`;
+    } else if (level === '水平二') {
+        avg_heart_rate = "130-140 次/分";
+        motor_ability = `1. 基本掌握【${skillName}】的规范技术动作要领，能在组合学练和低对抗情境中连贯完成；2. 发展动作协调、速度灵敏素质及基础力量，建立正确的动力表象。`;
+        health_behavior = `1. 养成主动做好准备活动与深层整理放松的习惯，练习时时刻与同伴保持合理安全间距；2. 懂得运动后及时擦汗、科学少量多次饮水。`;
+        sports_morality = `1. 在结对互练中能主动帮助同伴纠正动作，虚心接受同伴反馈建议；2. 在接力挑战中为队友加油呐喊，树立胜不骄败不馁的良好作风。`;
+    } else if (level === '水平三') {
+        avg_heart_rate = "135-145 次/分";
+        motor_ability = `1. 熟练掌握【${skillName}】技术动作组合并建立动力定型，能在小场地对抗或实战情境中合理连贯运用；2. 增强动作节奏把控与下肢爆发力、核心速度耐力储备。`;
+        health_behavior = `1. 掌握自测即刻脉搏心率的方法，懂得根据运动负荷调整运动与休息节奏；2. 自觉做好专项深层动态拉伸与防伤技能，养成良好的运动健康习惯。`;
+        sports_morality = `1. 在对抗比赛中勇于拼搏、敢于担当，在逆境失误时不埋怨队友；2. 严格遵守比赛规则，尊重裁判与对手，树立牢固的团队大局观与集体荣誉感。`;
+    } else if (level === '水平四') {
+        avg_heart_rate = "140-150 次/分";
+        motor_ability = `1. 系统掌握【${skillName}】完整技术动作链与攻防战术配合，能在正式对抗比赛中果断决策与熟练运用；2. 显著提升专项爆发力、耐力与心肺综合机能，助力中考体育与身体健康达标。`;
+        health_behavior = `1. 具备运动环境风险自主排查与自我保护技能，能科学调控运动负荷与间歇心率；2. 坚持完成补偿性课课练高强度体能，形成每天锻炼习惯。`;
+        sports_morality = `1. 展现坚毅果敢、百折不挠的意志品质，在激烈对抗中胜不骄败不馁；2. 严格遵守竞赛规则，文明参赛，具有高度的团队凝聚力。`;
+    } else { // 水平五 (高中)
+        avg_heart_rate = "142-155 次/分";
+        motor_ability = `1. 达到【${skillName}】高阶竞技专项化表现水平，熟练运用战术体系，具备阅读比赛与临场瞬时战术决策能力；2. 具备专项体能储备与自主裁判执法能力，形成伴随一生的稳定运动特长。`;
+        health_behavior = `1. 养成终身体育锻炼习惯，能根据自身体能数据自主制定科学运动处方与疲劳恢复计划；2. 掌握运动损伤预防常识，具备高对抗中的自我心理调控与抗压能力。`;
+        sports_morality = `1. 弘扬中华体育精神与奥林匹克道德风尚，在激烈对抗中展现领袖担当与规则操守；2. 尊重对手、裁判与观众，胜不骄败不馁，积极传递体育正能量。`;
+    }
+
+    // 重点与难点智能生成 (优先从 req 中提取大单元特定重难点)
+    let key_difficult_points = "";
+    if (req && req.includes('重难点')) {
+        const m = req.match(/重难点[聚焦指向]*[：:]\s*([^。\n]+)/);
+        if (m) {
+            key_difficult_points = m[1].trim();
+        }
+    }
+    if (!key_difficult_points) {
+        key_difficult_points = `重点：【${skillName}】的动作规范性与发力力传导链条顺畅；\n难点：手眼身步协调用力、动作节奏把控与动态对抗中的稳定性。`;
+    }
+
+    // 准备部分与基本部分
+    const prep_content = getSmartPrepContent(sport, skillName, level);
+    const prep_methods = `【教师活动】\n1. 声音洪亮，情境化语言导入，明确本课《${skillName}》学习目标；\n2. 领做专项动态热身跑与功能操，动作舒展干净，口令节拍精准有力；\n3. 巡回观察学生精神状态，调动全班昂扬学练热情。\n\n【学生活动】\n1. 集合迅速，“快、静、齐”，精神抖擞回答问询；\n2. 动作舒展到位，充分活动各肌肉群与关节韧带；\n3. 保持队伍整齐与合理安全间距，听哨音迅速反应。`;
+    const prep_org = `组织形式：四列横队体操散开队形（两臂间隔）。\n  ○  ○  ○  ○  ○  ○  ○  ○\n  ○  ○  ○  ○  ○  ○  ○  ○\n  △  △  △  △  △  △  △  △\n  △  △  △  △  △  △  △  △\n            ▲(教师)`;
+
+    const base_content = getSmartBaseContent(sport, skillName, level, stage, req, durNum);
+    const base_methods = `【教师活动】\n1. 完整与慢动作示范站位科学，提炼口诀便于学生建立动力表象；\n2. 巡回指导，针对普遍性错误鸣哨做正反对比示范，实施分层个别点拨；\n3. 组织教学比赛并严格执裁，体能环节在队伍前列带做口令倒数激励。\n\n【学生活动】\n1. 认真观察示范动作，齐声跟读动作口诀；\n2. 小组结对学练，“一人练、一人观察提示”，用口诀互相纠错；\n3. 全情投入比赛对抗，发扬拼搏精神；在课课练中挑战体能极限。`;
+    
+    let base_org = `组织形式：分组在指定区域推进练习，教师巡回指导。\n  [区域A] 小组1 ──学练──▶ [目标区]\n  [区域B] 小组2 ──学练──▶ [目标区]\n               ▲(教师巡视调度)\n  [区域C] 小组3 ──学练──▶ [目标区]\n  [区域D] 小组4 ──学练──▶ [目标区]`;
+    if (sport === 'run_sprint') {
+        base_org = `组织形式：四组跑道道次依次展开。\n  第1组道次 ──○ ○ ○ ○ ─────▶ [冲刺区]\n  第2组道次 ──○ ○ ○ ○ ─────▶ [冲刺区]\n                     ▲ (教师巡视指挥)\n  第3组道次 ──△ △ △ △ ─────▶ [冲刺区]\n  第4组道次 ──△ △ △ △ ─────▶ [冲刺区]`;
+    }
+
+    const homework = `1. 技能巩固作业：针对【${skillName}】动作要领徒手练习（每天30秒×3组），微视频记录打卡；\n2. 核心体能作业：开合跳（30次×2组）+ 原地深蹲起（20次×2组）+ 核心支撑（45秒×2组）。`;
+
+    return {
+        teacher_name: teacher,
+        teach_time: time,
+        topic_name: topic,
+        lesson_seq: seq,
+        stage,
+        level,
+        class_grade: grade,
+        student_count: count,
+        duration_num: durNum,
+        motor_ability,
+        health_behavior,
+        sports_morality,
+        teaching_content: `1. 核心技术组合与实战运用：${topic}\n2. 专项体能补偿（课课练）：下肢爆发力与躯干核心肌群循环练`,
+        key_difficult_points,
+        safety_assurance,
+        venue_and_equipment: finalEquip,
+        prep_content,
+        prep_methods,
+        prep_org,
+        prep_time: "8",
+        prep_intensity: level === '水平一' ? '小' : '小到中',
+        base_content,
+        base_methods,
+        base_org,
+        base_time: String(durNum === 45 ? 32 : 27),
+        base_intensity: level === '水平一' ? '小到中' : (level === '水平五' ? '大强度竞技' : '中到大'),
+        end_content: "1、放松\n2、师生总结\n3、布置课后练习作业\n4、回收器材\n5、师生再见",
+        end_methods: "1、教师带领学生做深层静态拉伸与呼吸身心放松\n2、引导学生对照三维核心素养开展自评互评\n3、布置课后体育锻炼作业与安全要求\n4、安排值日生归还整理器材\n下课",
+        end_org: "  •   •   •   •   •   •   •\n  •   •   •   •   •   •   •\n  •   •   •   •   •   •   •\n  •   •   •   •   •   •   •\n            ▲",
+        end_time: "5",
+        end_intensity: "小",
+        avg_heart_rate,
+        group_density: "≥75%",
+        individual_density: "≥50%",
+        homework,
+        savedAt: new Date().toLocaleString()
+    };
+}
+
+// ----------------- 从大单元卡片一键带入课时备课 (自动同步项目专业器材与参数) -----------------
+function loadUnitLessonIntoPlan(idx) {
+    if (!currentActiveUnitPlan || !currentActiveUnitPlan.lessons || !currentActiveUnitPlan.lessons[idx]) return;
+    const u = currentActiveUnitPlan;
+    const l = u.lessons[idx];
+    const level = u.level || detectLevel(u.grade);
+    const sport = detectSportDetail(u.unit_title + ' ' + l.content);
+
+    document.getElementById('lessonTopicName').value = `${u.unit_title}：${l.content}`;
+    document.getElementById('lessonSeq').value = `${l.seq} / 共 ${u.total_hours} 课时`;
+    document.getElementById('lessonClassGrade').value = u.grade || '八年级 1 班';
+    
+    // 联动设置水平下拉框和时长
+    const lvlSel = document.getElementById('lessonLevelSelect');
+    if (lvlSel) {
+        lvlSel.value = level;
+    }
+    document.getElementById('lessonDuration').value = (level === '水平五') ? '45' : '40';
+    
+    // 智能联动器材！
+    const equipInp = document.getElementById('lessonVenueEquip');
+    if (equipInp) {
+        equipInp.value = getSmartVenueAndEquipment(sport, level);
+    }
+
+    // 智能更新设计要求
+    document.getElementById('lessonSpecialReq').value = `本课为大单元${l.seq} (${level})。重难点聚焦：${l.key_point}。教学策略：${l.methods}。严格安排学练赛评与专项体能课课练。`;
+
+    switchLessonSubTab('plan');
+    showToast(`🔗 已将大单元【${l.seq}】参数与专项器材联动载入课时备课！`);
+}
+
+// ----------------- 从大单元下拉栏选择课次导入 -----------------
+function onSelectUnitLessonInWeb() {
+    const sel = document.getElementById('lessonUnitLessonSelector');
+    const idx = parseInt(sel.value, 10);
+    if (isNaN(idx)) return;
+
+    loadUnitLessonIntoPlan(idx);
+}
+
+
+const SPORTS_CURRICULA = {"basketball": {"name": "篮球", "stages": [["球性球感与基本站位姿势", "手对球的感知与身体平衡准备姿势", "双手抱球、原地滚球与感知球的弹性"], ["原地运球高低变化与手型手法", "按拍球的部位与掌心空出五指自然分开", "原地单手拍拍小皮球、手心空出按压球上方"], ["直线行进间运球推进与低运球护球", "跑动与按拍球节奏协调、推拨球后上方", "小皮球走直线：慢步拍球平稳向前移动"], ["体前变向换手运球与跨步变道过人", "拍球外侧上方、快速变向推拨、跨步转体侧身降重心", "森林绕树林：绕过标志碟运球不低头看球"], ["运球急停急起与进攻启动假动作", "制动减速脚步降重心、启动第一步蹬地发力", "听哨音急停急起：听口令抱球站稳不摔跤"], ["双手胸前传接球技术规范", "蹬地伸臂翻腕拨指与迎球后引缓冲", "双手送桃子与接大西瓜：双手推传与迎球抱稳"], ["行进间跑动中双手传接球配合", "移动中传球提前量把握与迎球接球平稳衔接", "两人同向走动传接球小游戏"], ["原地单手肩上投篮技术动作定型", "自下而上蹬地展髋、右臂前上屈伸压腕拨指", "对准小球筐投准：双脚站稳双手推投进低筐"], ["行进间单手低手投篮（三步上篮）", "一大二小三高跳、腾空舒展挑球入筐", "跨步双脚起跳双手投低筐"], ["运球突破接急停跳起投篮组合", "运球与急停衔接紧密、跳起最高点稳定出手", "运球到指定圈内停稳投篮"], ["双人传切配合战术基础（传球+空切）", "传球后摆脱防守快速空切篮下与回传时机", "二人合作传球进球门小游戏"], ["突分配合战术基础（突破+分球）", "持球突破吸引协防、果断分球给外线空位同伴", "运球吸引防守后传给同伴投筐"], ["进攻掩护配合（无球掩护与挡拆顺下）", "掩护选位与角度合法、掩护后迅速顺下切入", "同伴合作挡拆过障碍游戏"], ["半场人盯人防守滑步与保持防守选位", "屈膝降重心侧滑步、保持防守人与球篮之间站位", "老鹰捉小鸡防守脚步模仿游戏"], ["小场地（半场3v3）限制性对抗比赛", "战术在对抗中的灵活运用与攻防转换意识", "运球保护大作战与趣味投篮积分赛"], ["全场快速反击战术与快攻推进", "一传迅速果断、前场两翼快下与多打少决策", "全场运球接力奔跑挑战赛"], ["班级篮球教学比赛与战术实践", "全场对抗实战运用、团队协作与自主裁判", "趣味篮球嘉年华综合大闯关"], ["篮球大单元技能达标考核与综合评价", "组合技战术实战达标度、规则理解与自评互评", "小篮球达人勋章展示与师生互评总结"]]}, "football": {"name": "足球", "stages": [["熟悉球性与基础颠球、揉球体会球感", "脚对球各部位触感认知、脚踝放松微翘", "快乐踩踩小皮球：双脚交替轻踩球上方感知弹性"], ["脚内侧传地滚球动作技术规范", "支撑脚站位正对出球方向、屈膝展髋击球后中部", "小企鹅推球：两脚内侧互传小皮球游戏"], ["脚内侧接控地滚球与迎球缓冲", "接球脚适度后迎缓冲卸力、球停在体前适度距离", "大网捕鱼：将同伴踢来的地滚球稳稳停在脚下"], ["脚背正面运球与直线快速推进", "屈膝低重心、提踵脚尖向下、脚背正面推拨球后部", "开动小汽车：脚背推着小皮球沿直线平稳前进"], ["脚背外侧运球变向与曲线穿桩", "脚腕自然内扣、用脚背外侧变道推拨、身体侧倾", "贪吃蛇穿森林：推球绕过彩色标志盘不碰倒"], ["运球急停急转与变异变向摆脱", "支撑脚稳跨减速、运球脚迅速扣拉球改变前进方向", "红灯停绿灯行：听指令急停踩球与反向启动"], ["脚背内侧长传球与传高远球技术", "斜线助跑、支撑脚偏后、脚背内侧切入球底前上用力", "向小城堡发射：脚内侧长距离传球打靶"], ["脚内侧与脚背正面射门技术", "果断坚决、支撑脚踏稳、大腿带动小腿快速摆动射门", "小小神射手：将球踢进不同距离的球门趣味赛"], ["运球突破过人接射门组合衔接", "变向突破与起脚射门连贯不停顿、步幅调整顺畅", "运球过障碍后射门挑战赛"], ["二人踢墙式“二过一”战术配合", "传球后迅速前插跑位、接回传球一脚出球时机把控", "二人合作撞墙式配合过人小游戏"], ["直传斜插战术配合与跑动时机", "传球路线与穿插跑位时空协同、避免越位意识", "传球与快跑抢点抓宝物游戏"], ["局部防守技术（封堵角度与断球时机）", "降低重心侧向选位、盯人防球不盲目扑抢上抢", "小卫士守卫宝藏阻挡断球游戏"], ["小场地（五人制四门）限制性比赛", "快速传接球战术运用、小范围攻防配合默契度", "四门足球趣味争霸赛（每队各守两小门）"], ["边路突破传中与中路抢点包抄", "传中球落点控制与门前包抄跑位层次感", "边路送助攻、中路争抢进球组合练"], ["守门员基础技术与全队防守体系", "接高低球手型、倒地扑救与手抛球发动快攻", "守门员金手套挑战与防守队形站位"], ["全场攻防转换速度与防守反击", "由守转攻第一时间长传前插、由攻转守快速回防", "攻守转换反应大比拼游戏"], ["八人制正规场地足球教学比赛", "团队战术执行、阵型保持与文明竞赛裁判法", "班级绿茵争霸赛与技术表现评比"], ["足球大单元技能考评与综合素养总结", "运球绕杆射门限时考核、颠球测试与自评互评", "足球小球星勋章评定与大单元展示"]]}, "volleyball": {"name": "排球", "stages": [["排球球性球感与准备姿势、移动步法", "两脚开立屈膝降重心、并步滑步交叉步移动", "气球飘飘乐：双手托抛气球与轻柔移动接球"], ["正面双手垫球手型与击球部位定型", "插夹提移蹬、前臂腕关节上10cm桡骨内侧平整击球", "两臂夹小夹板：双臂伸直夹紧垫击吊球"], ["原地自垫球与高度控制练习", "上下肢协调用力、两臂平稳送球、自垫高度稳定", "看谁垫得多：原地轻垫球连续不落地小挑战"], ["移动中正面双手垫球与脚步配合", "人到球到、移动中迅速制动并调整身体正对来球", "移动接送快递：滑步移动准确接垫来球"], ["二人一组一抛一垫与连续对垫学练", "垫球弧度适宜、力量柔和准确、同伴间呼应默契", "二人搭档互送礼：一抛一垫稳稳传递"], ["正面双手传球基本手型与发力顺序", "额前上方半球形手型、手指手腕弹击、蹬地展体", "头顶托宝盆：双手在额前上方弹推软球"], ["正面双手传球移动接球与对传配合", "传球高度与方向把控、迎球蹬地传出稳定弧度", "二人空中对传不落地挑战"], ["垫传组合技术衔接与一传到位意识", "先稳垫后精传、移动调整身体重心连贯顺畅", "垫传接力过网趣味配合赛"], ["正面下方发球基本技术与击球点", "抛球平稳、挥臂自后向前、虎口或掌根击球中下部", "发球进圈：站在发球线后把球发进指定圈内"], ["正面上手发球技术（高中/初中进阶）", "抛球垂直适度、挥臂鞭打发力、掌跟坚实击球后中", "发球击靶大比拼：发球穿越低网打准"], ["扣球助跑起跳步法与空中挥臂引臂", "一步或两步助跑踏跳、双臂后摆前上引跳、鞭打发力", "摸高跳跃挥臂击吊球游戏"], ["完整扣球技术（扣固定球与扣二传球）", "助跑起跳时间与球下落点契合、最高点全手掌包满球", "小小重扣手：起跳将二传球扣过低网"], ["单人与双人拦网基本技术与手型", "起跳时机判断、两臂伸直插入对方场区、手腕下压", "高网筑长城：起跳双手过网封堵拦球"], ["后排防守起球与防守保护战术配合", "低姿态滑步救球、防守滚翻或单臂倒地救球", "地滚救球小英雄挑战赛"], ["“中一二”进攻战术配合阵型学练", "3号位二传组织、4号位与2号位扣球协同", "三人三角传递与进攻战术演练"], ["“边一二”战术配合与战术机动变化", "2号位二传策应、前排与后排攻防转换接应", "四对四小场地排球对抗练习"], ["六人制/四人制正规场地排球教学比赛", "发球轮转、站位规则、团队默契与裁判手势实践", "班级排球教学联赛实战对抗"], ["排球大单元综合技能考评与总结反思", "发球达标、垫球传球组合技评、比赛表现互评", "排球大单元成长收获总结与素养认证"]]}, "run_sprint": {"name": "田径快速跑与接力", "stages": [["跑的专门性练习（摆臂、高抬腿跑）", "前脚掌蹬地着地、两臂前后屈臂大幅摆动", "小快步小摆臂：原地听音乐节拍摆臂与碎步跑"], ["站立式起跑技术与听信号快速启动", "降低重心身体前倾、异侧手脚在前、听声快速蹬出", "听口令变变变：听哨音迅速启动抢占安全岛"], ["蹲踞式起跑“各就位-预备”姿势规范", "重心平稳前移高于肩、颈部放松、双手撑地间距合理", "小青蛙蹲踞听枪声：各就位蹲稳、预备提臀蹬出"], ["蹲踞式起跑鸣枪后第一步快速有力前蹬", "前蹬积极后摆迅速、身体保持较小前倾角平稳加速", "破浪前行：顶住阻力第一步强力前蹬加速"], ["起跑后加速跑的步频步幅合理递进", "由快步频逐渐增大步幅、身体重心由低逐渐平稳抬起", "彩色标碟跑：按渐进间距踩点加速跑"], ["途中跑直立放松大步幅与后蹬充分", "后蹬充分有力、大腿积极前摆、身体保持微前倾", "大步流星风火轮：体会腾空舒展与快速前蹬"], ["途中跑两臂协调摆动与躯干稳定控制", "肩部放松、以肩为轴屈臂前后自然有力摆动", "直道直线冲刺：在两条标志线内保持不偏道"], ["终点冲刺撞线技术与冲过终点缓冲", "终点前保持高速不减速、最后一步胸部前倾冲撞线", "飞越终点线：向前探胸撞线与跑出终点平稳减速"], ["弯道跑技术要领（身体内倾与两臂差异）", "身体向圆心内倾、右臂摆幅大于左臂、右脚内扣", "弯道超车小能手：沿跑道弧线加速平稳过弯"], ["接力跑持棒方法与起跑准备姿势", "右手持棒后三分之一端、身体平稳站立在预跑线", "接力棒握稳当：原地手持接力棒前后摆臂"], ["接力跑“下压式”传接棒技术手法", "传棒人手腕下压把棒送入、接棒人虎口朝后大张开", "盲接传接棒：不回头看手掌虎口朝后接棒"], ["接力跑“上挑式”传接棒技术手法", "传棒人自下而上挑送、接棒人四指朝下虎口向前", "上挑交接棒二人同步慢跑配合"], ["接力跑预跑线丈量与全速奔跑中交接棒", "起动标志线准确丈量、接棒人全力加速中完成盲接", "接力跑预跑配合与交接区全速冲刺"], ["障碍跑与穿梭变向快速奔跑挑战", "快速跨越小障碍箱不减速、平稳变向跨步衔接", "跨越小火线：跨栏垫与标志桶障碍接力跑"], ["4×50米/4×100米接力跑实战比赛演练", "四棒选手特长分配、交接区不掉棒不犯规", "小组迎面与圆周接力对抗争霸赛"], ["反应速度与50米/100米极限冲刺挑战", "起跑反应时缩短、全速冲刺全程保持不降速", "百米飞人争霸赛：挑战个人最好成绩"], ["短跑田径竞赛规则与发令、计时裁判法", "抢跑犯规判罚、道次占用规则、秒表计时读数", "学生轮流担任发令员、计时员实操实践"], ["快速跑与接力跑大单元测验与评价总结", "50m/100m成绩达标测试、接力赛团队合作总评", "速度达人勋章颁发与大单元成长总结"]]}, "run_endurance": {"name": "中长跑与耐久跑", "stages": [["耐久跑身体姿态与跑走交替适应练", "躯干保持正直微前倾、两臂小幅度前后轻松自然摆动", "小火车长途旅行：慢跑与慢走交替不掉队"], ["耐久跑呼吸节奏与步频配合（两步一呼吸）", "口鼻同时呼吸、深而有节奏、两步一呼两步一吸", "呼气吸气小韵律：跟着节拍口鼻深度换气跑"], ["三步一呼一吸呼吸方式进阶与体会", "呼吸深沉充分、吐尽气体、避免浅快呼吸导致缺氧", "三步呼吸法操场慢跑适应练"], ["途中跑匀速跑与体能分配策略认知", "起跑不猛冲、中间保持匀速节律、预留冲刺体能", "匀速打卡巡航跑：佩戴心率表保持稳定配速"], ["自然地形跑与校园越野跑适应性练习", "根据路面坡度微调步幅与重心、提升越野适应力", "校园趣味定向越野跑寻宝记"], ["“极点”现象产生原因认知与生理反应体验", "极点出现时胸闷气喘、腿部沉重发酸等正常反应识别", "极点体验与心理认知宣讲"], ["克服“极点”的科学方法与意志力调控", "加深呼气动作、适度放慢步速、心理自我积极暗示", "战胜极点英雄闯关：坚持跑完不轻言放弃"], ["“第二次呼吸”产生体验与体能复苏调整", "呼吸变得均匀顺畅、步伐重新轻快、进入舒适巡航", "迎接第二次呼吸跑动体验"], ["弯道跑技术在长跑中的体力节约运用", "贴内道切线奔跑、身体微向内倾、摆臂幅度微调", "内道切线跑省力技巧实践"], ["变速跑与莱格尔折返跑耐力挑战", "快慢交替刺激心肺功能、间歇调整呼吸耐受度", "音乐节奏变速跑（快慢交替8组）"], ["跟跑战术与防风破风配合技巧", "紧跟第一梯队领跑员减阻、保持合理跟随间距", "二人结伴跟跑破风战术互换练"], ["超越战术与弯道加速超车时机把握", "直道果断超越、避免弯道外侧多跑距离、快速甩开", "弯道直道超越战术模拟对抗"], ["最后150-200米终点冲刺技术与意志爆发", "加大摆臂幅度、加快步频大步冲刺、咬牙坚持触线", "冲刺发力大爆发：终点直线全力加速"], ["跑后心率自我监测与疲劳程度科学自评", "双手搭摸颈动脉或手腕桡动脉10秒测算即刻心率", "心率恢复记录表填写与自评"], ["跑后深层静态拉伸与下肢大肌群筋膜放松", "下肢小腿腓肠肌、大腿股四头肌与腘绳肌静态牵拉", "结伴下肢肌肉放松排酸操"], ["800米（女）/1000米（男）模拟测试与配速演练", "第一圈控速、第二圈匀速、第三圈加力、末程冲刺", "全真模拟达标摸底测验"], ["中长跑体育竞赛规则与安全防晕厥防伤常识", "避免空腹跑步、跑后严禁立即静坐躺卧、科学补水", "安全长跑救护与健康常识研讨"], ["中长跑大单元成绩达标评测与耐力素养总结", "800m/1000m最终考评打分、耐力精神总结表彰", "终身体育耐力挑战勋章颁发与反思"]]}, "jump": {"name": "田径跳跃", "stages": [["跳跃基本动作感知与单双脚趣味跳跃", "前脚掌轻巧蹬地、屈膝缓冲落地、双手配合摆动", "小青蛙跳荷叶：双脚连续跳过小圆圈游戏"], ["立定跳远预摆技术与蹬地协同动作", "两臂前后预摆两腿屈伸、上下肢动作节律协同配合", "小弹簧向下压：屈膝预摆体会肌肉拉伸张力"], ["立定跳远强力蹬地起跳与腾空展髋", "前脚掌强力扒地蹬伸、双臂向前上方快速有力挥摆", "大鹏展翅：起跳腾空身体向前上方充分伸展"], ["立定跳远收腹举腿与向前送髋动作", "空中快速收腹抬大腿、小腿前伸准备落地", "空中抱膝动作模仿与落地前伸腿"], ["立定跳远屈膝缓冲落地与身体平衡控制", "脚跟先着地迅速过渡到全脚掌、深屈膝缓冲不后坐", "猫咪轻盈落树枝：落地轻巧无巨大冲击声"], ["立定跳远完整技术连贯定型与丈量跳远", "预摆、起跳、腾空、落地四环节一气呵成不脱节", "挑战小彩带：挑战不同远度标志线"], ["急行跳远助跑技术与助跑步点丈量方法", "助跑逐渐加速、步频加快、最后一步快速有力踏跳", "步点丈量八步法：固定助跑步数与起跳点"], ["急行跳远起跳板踏跳与快速起跳动作", "全脚掌滚动踏板、起跳腿强力蹬直、摆动腿高抬", "踏板爆发起跳击悬挂高球"], ["蹲踞式跳远空中姿势与团身收腹", "起跳后起跳腿迅速向前上方收拢成蹲踞姿势", "沙坑踏跳腾空展姿飞跃"], ["挺身式跳远腾空展体与放腿送髋进阶", "起跳后留在后方、展胸展髋成弓形、落地前快速折叠", "空中挺身弓形拉伸动作体会"], ["沙坑安全着落与防扭伤前滚缓冲技巧", "双脚齐落沙坑、屈膝低头团身前倾避免后坐减分", "沙坑安全落坑与顺势前倾防伤"], ["跨越式跳高助跑路线与起跳脚选择", "斜线助跑、最后几步降低重心、外侧脚有力踏跳", "斜向助跑踏跳节奏步点演练"], ["跨越式跳高过杆动作（摆动腿与起跳腿相继跨越）", "摆动腿过杆后快速下压、起跳腿高抬外旋过杆", "跨越橡皮筋：低高度体会剪刀式过杆"], ["跨越式跳高落地缓冲与垫上安全保护", "摆动腿先着地、起跳腿依次落地屈膝深缓冲", "过杆平稳落地成弓步缓冲练"], ["跳跃专项力量补偿（深蹲跳、台阶跳、单足连续跳）", "发展踝膝髋三关节爆发力与核心弹跳能力", "弹跳力超级挑战营循环练"], ["跳远与跳高比赛实战模拟与裁判规则实践", "三次试跳机会、起跳过线犯规判定、成绩测量读数", "班级跳跃田径挑战赛现场实操"], ["弱项专项纠错（踏跳不准、落地后坐、过杆打杆）", "针对步点不稳与起跳不充分针对性纠偏", "个性化跳跃技能提升工作坊"], ["跳跃大单元技能达标考核与综合评价", "立定跳远/急行跳远成绩实测打分、弹跳素养总评", "跳跃达人勋章授予与单元收获总结"]]}, "throw": {"name": "田径投掷", "stages": [["握球持球手型规范与投掷感知游戏", "五指自然分开托球、掌心空出、手腕保持放松", "小蚂蚁搬豆：双手托球行走与传递游戏"], ["原地自下而上发力顺序体验（蹬地、展髋）", "下肢蹬地带动髋关节前转、体会力量由下往上传导", "地面对抗发力：蹬地推墙体会反作用力"], ["躯干挺胸与背弓发力动作感受", "胸部主动迎前展开成满弓、肩部充分后引", "大弓拉满弦：双手持球后仰挺胸成背弓"], ["原地双手头上向前抛掷实心球技术规范", "预摆引球、蹬腿展髋、收腹甩臂、鞭打拨指", "发射小卫星：双手从头后向前上方掷出"], ["投掷出手角度控制（约38°-42°前上方）", "严禁平行扔出或垂直高扔、瞄准斜上方目标线", "穿越高障碍绳投掷出手角度强化"], ["出手速度与最后手腕手指快速下压拨球", "在最高点快速鞭打发力、球出手带有前旋速度", "球击地面反弹距离比拼小游戏"], ["原地推铅球握持球手型与锁喉贴颈姿势", "手指托球、大拇指小指扶球、紧贴锁骨上方贴颈", "铅球牢牢吸在锁骨窝站位规范"], ["原地侧向推铅球站位与转体蹬地动作", "两脚开立成丁字步、重心在后腿、右腿蹬地转髋", "原地转体推空手动作结构演练"], ["原地推铅球出手动作与“推-拨”手法", "肘关节抬平、右臂快速向前上方推伸、手指用力拨", "推铅球打固定靶击准挑战赛"], ["侧向滑步推铅球滑步技术动作要领", "低重心右腿单脚蹬地平稳滑行、左腿迅速积极摆出", "沙地滑步低重心动作稳定性练"], ["滑步与最后用力衔接技术（不停顿一气呵成）", "滑步落地瞬间立刻转体蹬地推球、节奏连贯紧密", "滑步接快速推球连贯节奏练习"], ["维持身体平衡技术（投掷后换步防出界）", "球出手后迅速换右腿向前跨步支撑减速不踩线", "换步缓冲刹车防止踏出投掷圈"], ["双手后抛实心球与旋转投掷趣味体验", "背向投掷目标、蹬腿挺髋将球从头后向后方猛掷", "后抛重球挑战背部爆发力游戏"], ["投掷安全防范规程与纪律严密贯彻", "绝对禁止逆向捡球、统一听口令捡球与投掷线管理", "投掷安全防护标兵演练"], ["投掷专项力量补偿（俯卧撑、实心球深蹲推起）", "发展上肢推力、肩背力量与躯干核心抗爆发力", "力量课课练Tabata肌力循环"], ["投掷模拟竞赛与丈量成绩裁判法实践", "三次投掷机会、成绩从球落点最近痕迹丈量到线内", "班级大力士投掷锦标赛"], ["技术纠偏与出手角度、发力脱节专项微调", "纠正曲臂扔球、仅用手臂不用腰腹下肢的普遍错误", "发力动作慢动作互检工作坊"], ["投掷大单元技能考核与综合评价", "实心球/铅球远度达标测验、力量素养与安全评定", "力量健将勋章颁奖与大单元总结"]]}, "gymnastics": {"name": "体操与垫上技巧", "stages": [["身体姿态控制与垫上团身滚动体验", "低头看肚脐、双膝并拢紧贴胸口、双手抱小腿下部", "小刺猬滚成团：垫上前后左右圆滑团身摇船"], ["前滚翻低头含胸与后脑着垫技术动作", "两手撑垫与肩同宽、屈臂低头、后脑勺轻轻着垫", "小皮球翻跟头：下颌夹小手绢低头前滚翻"], ["前滚翻团身抱膝与顺势起立动作定型", "蹬地推手、团身紧、滚动圆滑、顺势抱膝起立", "翻完平稳站立小英雄挑战"], ["前滚翻同伴保护与帮助方法学练", "保护者跪立于侧面、一手托后腿一手扶肩辅助前推", "小小保护神：互相检查保护动作到位率"], ["前滚翻分腿起立与组合动作拓展", "滚动至臀部着垫时两腿迅速向两侧分开撑手起立", "前滚翻接分腿起成造型姿态"], ["后滚翻推手用力技术要领与头颈保护", "两手翻掌贴肩上、指尖朝后、头颈放松避免偏歪", "手推小弹簧：躺下双手放肩上推垫动作练习"], ["后滚翻团身向后翻滚与快速翻掌推垫", "臀部后坐、团身紧、滚动至颈肩部双手快速发力推", "后滚翻过斜坡垫轻松翻越"], ["连续前滚翻与前滚翻接跪跳起组合", "滚翻完成后动作不停顿、顺势向前连续滚动或立起", "动作连连看：行进间连续滚翻小套路"], ["跪跳起技术要领（小腿压垫、摆臂挺髋）", "跪立垫上、两臂后摆前扬、脚背小腿用力压垫提膝", "小青蛙跪地弹跳：跪跳起平稳立在垫上"], ["肩肘倒立基本姿势（两手托腰、挺髋展体）", "背部压垫、双腿向上垂直伸展、双手托住腰后侧", "倒立小竹笋：笔直向上伸腿展髋不晃动"], ["肩肘倒立同伴保护与帮助方法规范", "保护者站在侧面、双手握住练习者脚踝向上提拉", "二人合作肩肘倒立直立造型展示"], ["技巧成套动作连接与节奏编排（组合A+B+C）", "滚翻+跪跳起+肩肘倒立平稳串联、过渡动作自然", "垫上动作小舞美：自创三连动作"], ["支撑跳跃（山羊分腿腾越）踏跳与两手撑箱", "单脚起跑双脚踏跳板、两臂向前下方积极有力推箱", "踏板起跳有力支撑跳跃体验"], ["分腿腾越空中姿势与提臀分腿动作", "推箱有力、两腿向两侧迅速分开、抬头挺胸展体", "大鹏过山羊：分腿舒展跨越障碍"], ["落地屈膝缓冲与挺胸亮相姿态控制", "两脚并拢平稳着垫、屈膝深缓冲、双臂斜上举亮相", "体操明星亮相动作雕琢"], ["体操垫上动作成套演练与美感艺术表现", "动作舒展大方、开合有度、节奏清晰、神采奕奕", "小小体操健美展示秀"], ["技巧动作评判规则与审美评价实践", "扣分点认知（屈膝、分腿、倒地、走样）、互相打分", "学生评委评分团实操演练"], ["体操大单元技能考评与综合素养总结", "成套动作技评考核、身体姿态与勇气品格综合总评", "体操优雅风采勋章授予与单元总结"]]}, "wushu": {"name": "武术与民族传统", "stages": [["武术抱拳礼仪与基本手型（拳、掌、勾）", "握拳紧扣、立掌平正、屈腕成勾，抱拳礼规范端庄", "小小武者拜师礼：学习中国武术抱拳礼仪"], ["武术基本手法（冲拳、推掌、架拳）", "从腰间出拳、旋臂发力、力达拳面与掌根，力点清晰", "出拳生风：腰间发力快速冲拳配合呼哈呐喊"], ["武术基本步型——弓步与马步技术规范", "前腿弓后腿直、两脚全脚掌踏地；马步屈膝大腿水平", "扎马步站如松：弓步马步桩功稳定性比拼"], ["武术基本步型——仆步、虚步与歇步规范", "仆步全蹲一腿挺直平铺；虚步前脚虚点；歇步交叉全蹲", "武术五步造型静态雕琢练"], ["步型转换练习（由弓步平稳转换为马步、仆步）", "沉肩降重心、转髋碾脚、步法转换沉稳不飘晃", "五步连环转换脚步协调操"], ["武术基本腿法——正踢腿与里合外摆腿", "挺胸立腰、起腿快速、踢腿过头顶、勾脚尖力达脚跟", "踢腿如出鞘宝剑：正踢腿踢向手掌打响"], ["武术基本腿法——弹腿与侧蹬腿发力技巧", "屈膝提起、快速向前弹踢或侧蹬、力达脚尖或脚跟", "弹腿如鞭子抽打：快速出腿收腿"], ["五步拳第一段（弓步冲拳、弹腿冲拳、马步架打）", "步法与手法协调一致、连贯紧密、呼号响亮有气势", "五步拳前三动分解与合练"], ["五步拳第二段（歇步盖打、提膝穿掌、仆步穿掌）", "动作开合起伏、虚实分明、提膝站立平稳不晃动", "五步拳中段动作行云流水学练"], ["五步拳第三段（虚步挑掌与并步抱拳收势）", "转体利落、挑掌到位、抱拳归位从容端庄、神清气爽", "五步拳全套连贯动作串联"], ["完整五步拳套路演练（节奏感与精气神打磨）", "动如涛、静如岳、起如猿、落如鹊、眼随手走", "集体五步拳整齐划一气势排练"], ["对练攻防体验（一人出拳、一人架防推掌）", "安全距离把控、体验武术攻防技击真实含义", "双人安全对拆拆招互动小游戏"], ["少年连环拳套路初体验（上步冲拳、转身劈砸）", "动作刚劲有力、长拳大开大合、动作舒展", "少年连环拳第一段动作传授"], ["武术步法移动（闪躲防守与上步抢攻）", "进退从容、滑步敏捷、身手敏捷闪展腾挪", "闪展腾挪轻功步法练习"], ["武术精气神与眼神、呼吸协同发力", "以气催力、发声发力、精气神饱满充沛贯穿套路", "武术神采奕奕目光与气势专项训练"], ["班级武术擂台展示与武德修养研讨", "尚武崇德、强身健体、尊师重道、严禁打架斗殴", "武德讲堂与班级套路汇演"], ["武术套路打分规则与裁判评定实践", "套路完成度、规格姿态、劲力协调评分标准掌握", "学生裁判团举牌打分实践"], ["武术大单元技能考评与民族体育素养总结", "五步拳成套动作考评打分、精气神与礼仪综合认证", "中华武术小传人勋章授予与单元总结"]]}, "rope": {"name": "跳绳与综合体能", "stages": [["手腕摇绳发力动作规范与绳长测量方法", "双手握柄、大臂微贴躯干、单凭手腕画小圆旋转摇绳", "摇动小银蛇：单手空摇绳听清呼呼风声"], ["双脚并跳基本起跳节奏与前脚掌着地缓冲", "前脚掌轻点地面、膝关节微屈缓冲、身体直立不驼背", "小皮球有弹性：原地随节拍轻快跳动"], ["单摇跳绳连贯节奏练习（摇跳协同一致）", "摇绳一周双脚跳过一次、绳落地前起跳、动作轻盈", "连续单摇跳绳10个、20个不绊绳挑战"], ["跳绳动作纠错（纠正大臂抡大圈、落地点死板等）", "收拢大臂、两手放于身体两侧腰间、手腕灵活抖动", "贴臂跳绳法：大臂夹报纸不掉落练习"], ["跳绳速度进阶与30秒快速冲刺跳", "缩小跳跃高度、加快手腕抖动频率、呼吸平稳不乱", "30秒速度小马达极速跳挑战赛"], ["单脚交换跳（跑步跳绳步法）规范学练", "双腿像慢跑一样左右交替起跳、脚掌轻捷弹起", "跑步跳绳两脚交替快速穿过绳子"], ["提膝跳与后踢腿跳绳趣味变式", "跳跃中单腿提膝或后踢腿、发展下肢协调性与核心", "花样小舞步跳绳体验"], ["双摇跳（一跳两摇）爆发力动作技术要领", "垂直高跳起空、手腕极速连续抖动两次甩绳过脚", "腾空双飞燕：原地起跳手腕快速空摇双响"], ["双摇跳起跳高度与快速抖腕节奏衔接", "保持身体正直紧绷、在腾空最高点完成两次过绳", "双摇跳连续1次、2次突破挑战"], ["并脚交叉跳绳动作规范（手臂交叉过绳）", "双手在胸前交叉幅度适中、绳圈张开、双脚及时跨过", "手臂打结跳：手臂十字交叉跳跃挑战"], ["直摇与交叉摇循环交替花样跳绳", "一次正常跳接一次交叉跳、连贯循环不卡顿", "花样编排跳：一正一反循环跳绳"], ["双人一绳同向并排跳绳合作挑战", "两人并排站立各握一绳柄、起跳时机高度绝对一致", "心连心同跳一根绳：双人同步跳绳"], ["双人同跳一根绳（一人摇绳两人同跳）", "摇绳人掌控节奏、进绳人默契跟进、面对面同步跳", "二人面对面跳绳默契大比拼"], ["长绳“8”字穿梭跳集体跳绳配合", "摇绳人保持匀速大圆弧、跳绳人依次跑入跳跃后穿出", "长绳长龙穿梭不间断接力赛"], ["1分钟速度耐力跳极限体能负荷挑战", "全程保持高速步频、后半程咬牙克服手臂小腿酸痛", "1分钟耐力跳绳突破个人历史纪录"], ["花样跳绳小组自创编排套路与音乐卡点", "将单跳、双摇、交叉跳、长绳结合音乐创编展示", "跳绳炫酷微秀场小组编排"], ["跳绳裁判计数规则与考评测验方法实践", "绊绳重新计数、踩线判定、电子计数手柄操作", "学生裁判计数员考核实践"], ["跳绳与体能大单元达标评测与总结评价", "1分钟速度测试、花样套路展演、体能耐力综合总评", "跳绳小达人荣耀勋章颁奖与反思"]]}, "racket": {"name": "乒羽网小球类", "stages": [["球拍握法与准备姿势、球性本体感觉体验", "正手握拍与反手握拍灵活转换、屈膝降重心迎球", "拍托小球不落地：球拍端球平稳行进小挑战"], ["颠球技术与球拍击球弹力高度控制", "手腕平稳托起、保持球在球拍甜区垂直弹跳", "颠球大王挑战：连续颠球30个不掉落"], ["正手移动中颠球与对墙击球感受反弹", "体会球撞击墙面后的反弹角度与击球引拍距离", "对墙击球接小球练习"], ["基本站位与并步、跨步、垫步移动步法", "前脚掌着地微翘、快速启动变向、回位迅速", "灵动小步伐：跟随指令快速移动到位"], ["正手攻球/正手高远球基本动作轨迹与挥拍", "转体引拍、自后向前上方挥拍、迎击来球最高点", "挥拍击准空气吊球动作定型练"], ["正手击球击球点与出手拍形角度控制", "拍面稍前倾、击球后中上部、手腕随球顺势前送", "击球过网打靶进指定积分区"], ["反手推挡/反手接发球技术动作规范", "引拍至胸前、向前迎推球后部、手腕前伸推压", "反手推挡稳健过网练习"], ["正反手快速换位击球步法衔接", "击球后迅速回中还原准备、随时根据落点换手型", "左右开弓正反手连续对练"], ["发球基本技术（平击发球/正手上发球）", "抛球垂直平稳、击球点合规、球落入对方有效区", "发球进网格打准比拼"], ["旋转发球与长短球发球战术基础", "利用摩擦力制造旋转、忽长忽短打乱对手接发节奏", "刁钻发球大破防游戏"], ["二人隔网多回合基本技术对打学练", "控制击球力量与落点、保持球多回合连续过网", "二人和平对拉多回合吉尼斯挑战"], ["脚步移动中扣杀/重击球进攻技术", "高点击球、全手腕下压扣杀、攻击对方弱侧防区", "霸气扣杀球进攻突破练习"], ["网前小球技术（轻搓、轻放、网前挑球）", "手腕细腻轻柔、贴网而过、迫使对手起高球", "网前魔术师轻巧放小球"], ["进攻防守战术转换与空档落点调动策略", "压左突右、调前突后、利用球场宽广空间拉扯对手", "空档调动战术模拟演练"], ["双打配合基础（前后站位与左右轮转配合）", "双人默契分工、不抢球不漏球、跑位接应合理", "双打搭档同心协力实战配合"], ["小场地教学单打与双打对抗实战比赛", "严格遵守发球得失分规则、全神贯注投入对抗", "班级小球王争霸赛小组单循环赛"], ["竞赛裁判规则与计分执法手势实践", "出界判定、擦边擦网判决、发球违例裁判实践", "学生轮流执裁执法裁判体验"], ["小球技能达标考核与大单元素养评价", "发球定点、多回合对打计数、实战对抗综合总评", "国球健将勋章颁发与大单元总结"]]}, "general": {"name": "综合体育与球类", "stages": [["体育运动安全认知与热身激活方法", "课前排查隐患、活动各关节大肌群、建立安全规范", "快乐热身小跑与关节灵动操"], ["核心身体姿势与平衡协调基本功能练习", "保持躯干中正稳定、单双脚支撑平衡稳定不晃", "金鸡独立与平衡木平稳走游戏"], ["基本奔跑与多方向敏捷移动变向技巧", "低重心制动加速、交叉步、侧滑步变换自如", "敏捷小猎豹四向折返跑"], ["基础手部操控技能与物体抛接推拨规范", "双手接抛球、手眼协调、准确接纳飞行物体", "抛接沙包与皮球互动小挑战"], ["基础下肢操控技能（踢、踩、阻挡、跨越）", "单腿支撑稳健、摆动腿发力准确、击打移动目标", "踢准目标与跨越地障碍物"], ["双人协同合作动作与同步配合学练", "与同伴保持动作同步、互相呼应、力量柔和传导", "两人三足齐步走与同伴合力运物"], ["组合运动技能衔接与节奏控制体会", "技能A与技能B无缝过渡、跑动中动作不僵硬脱节", "快速穿梭障碍综合动作串联"], ["小团队团队防守阵型与选位移动配合", "保持防守距离、呼应补位、封堵关键通道", "防守阵线小长城协同移动"], ["团队进攻配合雏形（传导球与空间寻找）", "把球传向空档同伴、积极无球跑位撕扯空间", "传球穿过防线得分小游戏"], ["攻防转换速度与团队协作默契建立", "由守转攻迅速前插、由攻转守集体退防不滞后", "闪电攻防大转换实操游戏"], ["小场地限制性团队教学比赛与规则实践", "遵守友谊第一规则、积极运用所学动作挑战对手", "班级趣味球类对抗小比赛"], ["专项运动体能强化（核心肌群与下肢耐力）", "Tabata体能训练、爆发力深蹲与平衡抗阻训练", "体能加油站耐力爆发力打卡"], ["复杂多技能情境模拟挑战与策略推演", "在动态对抗中合理选择动作、冷静处理突发情况", "实战情境战术演习大闯关"], ["逆境心理调控与抗挫力意志品质磨练", "落后时不气馁、领先时不骄躁、为队友失误鼓掌", "落后逆转心理调控比赛演练"], ["体育竞赛规则认知与学生自主裁判实践", "公正裁判、吹哨果断、文明观赛礼仪宣导", "学生当裁判现场吹哨打分实践"], ["班级团队挑战对抗赛实战竞技", "全员参与、展示团队战术凝聚力与最高水平", "班级全员运动争霸赛"], ["针对性短板技术个性化纠偏与巩固", "查漏补缺、针对动作细节再次精雕细琢", "互助导师团个性化辅导提升"], ["大单元运动素养综合达标考评与总结", "运动能力达标评定、健康行为与体育品德总评", "体育之星勋章表彰与成长档案回顾"]]}};
+
+// ----------------- 内置新课标专家大单元计划生成器 (彻底杜绝千篇一律，精准对标项目与水平一到五) -----------------
+function generateExpertUnitPlan(params) {
+    const { title, grade, hours, desc } = params;
+    const h = parseInt(hours, 10) || 6;
+    const level = detectLevel(grade);
+    const sport = detectSport(title + ' ' + (desc || ''));
+
+    const sportInfo = SPORTS_CURRICULA[sport] || SPORTS_CURRICULA.general;
+    const stages = sportInfo.stages || SPORTS_CURRICULA.general.stages;
+
+    // 动态提取/插值 h 个课时（彻底避免课时内容重复）
+    const lessons = [];
+    for (let i = 0; i < h; i++) {
+        let stageIdx = 0;
+        if (h === 1) {
+            stageIdx = 0;
+        } else if (h === stages.length) {
+            stageIdx = i;
+        } else if (h < stages.length) {
+            stageIdx = Math.round(i * (stages.length - 1) / (h - 1));
+        } else {
+            stageIdx = i % stages.length;
+        }
+
+        const rawStage = stages[stageIdx] || stages[0];
+        let content = rawStage[0];
+        let key_point = rawStage[1];
+        let methods = "";
+        let literacy = "";
+
+        // 根据水平阶段（水平一至水平五）进行精细化词汇、组织形式与策略重塑
+        if (level === '水平一') {
+            content = rawStage[2] || rawStage[0];
+            key_point = `重点：体会动作身体感受与愉快参与；难点：手脚身眼协调自然、听指挥排队轮流玩`;
+            methods = `趣味童趣情境导入、模仿小动物动作、儿歌动作口诀记忆、无强对抗小组互助小游戏、趣味闯关打卡`;
+            literacy = `运动能力（基本动作感知与协调性）、健康行为（课前排查服装、安全防撞习惯）、体育品德（礼貌谦让、体验运动快乐）`;
+        } else if (level === '水平二') {
+            key_point = `重点：动作规范性（触球/发力部位准确）；难点：上下肢协调用力与用力节奏`;
+            methods = `分解模仿练习、双人结对互练互查、小场地接力挑战赛、趣味投准打靶比拼、专项敏捷梯脚步体能`;
+            literacy = `运动能力（单一技术动作规范定型）、健康行为（主动热身与充分整理放松）、体育品德（互相鼓励包容、遵守规则）`;
+        } else if (level === '水平三') {
+            key_point = `重点：${key_point}；难点：技术组合衔接连贯性与跑动中动作稳定性`;
+            methods = `结构化技能组合练习、小场地（3v3/4v4）限制性对抗比赛、攻防转换模拟、自重力量课课练Tabata循环`;
+            literacy = `运动能力（结构化技能组合进阶）、健康行为（心率自我监测、安全防伤技能）、体育品德（团队配合协作、尊重裁判与对手）`;
+        } else if (level === '水平四') {
+            key_point = `重点：${key_point}（完整力传导链条）；难点：强对抗中动作稳定性与战术机动时机`;
+            methods = `战术板推演、行进间加阻攻防演练、半场/全场教学比赛、中考体育专项补偿体能（立定跳远/引体/耐力跑）`;
+            literacy = `运动能力（综合技战术实战运用）、健康行为（科学调控运动负荷、自我保护技能）、体育品德（坚毅果敢、顽强拼搏、胜不骄败不馁）`;
+        } else { // 水平五 (高中)
+            key_point = `重点：${key_point}（高阶竞技专项化表现）；难点：阅读防守、瞬时战术决策与逆境心理调控`;
+            methods = `全场高强度竞技对抗联赛、战术录像复盘分析、学生全员组织执裁与裁判法实践、高阶专项无氧体能储备`;
+            literacy = `运动能力（高阶专项竞技素养）、健康行为（终身运动习惯、运动损伤自主康复处方）、体育品德（领袖担当、体育道德精神）`;
+        }
+
+        lessons.push({
+            seq: `第 ${i + 1} 课时`,
+            content,
+            key_point,
+            methods,
+            literacy
+        });
+    }
+
+    // 大单元理念、目标与评价指标体系按水平精准定制
+    let concept = "";
+    let goals = "";
+    let evaluation = "";
+
+    if (level === '水平一') {
+        concept = `【大概念引领与低段学情定位】紧扣新课标水平一（小学1-2年级）“以游戏化促运动、重兴趣养习惯”理念。以【${title}】为童趣情境载体，通过“小动物学本领”、“童话大闯关”等情境化主题，引导低段学生在模仿与玩耍中体验基本身体活动能力，杜绝成人化枯燥战术训练，注重安全防撞与秩序感养成。${desc || ''}`;
+        goals = `1. 运动能力：在趣味游戏中体验【${title}】的基础动作姿态，动作自然协调，能做出模仿与平衡动作，发展身体协调、柔韧与灵敏素质；\n2. 健康行为：能够听从哨音与口令迅速集合，课前自觉检查服装鞋带并清理口袋坚硬异物，运动出汗后懂得保暖并不喝生冷生水；\n3. 体育品德：体验体育运动带来的纯粹快乐，在游戏中不争抢器械、礼貌排队轮换，能和小伙伴友好合作完成游戏任务。`;
+        evaluation = `过程性评价（占比60%）：课堂常规遵守（听哨音集合速度）、游戏参与热情与同伴互助表现；\n终结性评价（占比40%）：基础动作模仿舒展度与趣味小游戏闯关通关表现（颁发“体育小健将”勋章）。`;
+    } else if (level === '水平二') {
+        concept = `【大概念引领与中段学情定位】紧扣新课标水平二（小学3-4年级）“由基础动作向专门技能平稳过渡”理念。以【${title}】为运动技能载体，由单一规范动作（手型、步法、发力部位）循序递进到简单双人配合，落实“学练赛评”一体化，结合接力比拼激发团队求知欲。${desc || ''}`;
+        goals = `1. 运动能力：基本掌握【${title}】的规范技术要领，能在组合练习和小团队接力赛中连贯完成，增强上下肢协同发力能力；\n2. 健康行为：养成主动做好准备活动与深层整理放松的习惯，练习时时刻与同伴保持合理安全间距，学会出汗后科学补水；\n3. 体育品德：在小组互助学练中积极思考并接受同伴纠错，在小型比赛中为队友加油呐喊，树立胜不骄败不馁的良好作风。`;
+        evaluation = `过程性评价（占比50%）：日常学练出勤与结对纠错积极性、课课练达标表现；\n终结性评价（占比50%）：核心技能动作达标考核（30%）+ 小型接力与团队合作表现（20%）。`;
+    } else if (level === '水平三') {
+        concept = `【大概念引领与高段学情定位】紧扣新课标水平三（小学5-6年级）“结构化技能组合与小场地对抗”理念。以【${title}】为实战育人载体，从“技能A+技能B”组合衔接过渡到小场地（3v3/4v4）真实攻防对抗，注重动作动力定型与攻防转换意识，结合自重力量补偿。${desc || ''}`;
+        goals = `1. 运动能力：建立【${title}】核心技术的动力定型，能在快节奏组合练习和小场地对抗中合理运用，显著提升速度耐力与下肢爆发力；\n2. 健康行为：掌握自测即刻脉搏心率的方法，能根据疲劳程度自主微调练习间歇，掌握针对性动态拉伸与防伤技能；\n3. 体育品德：在对抗比赛中敢打敢拼、直面失误，具有自觉遵守规则与服从判决的意识，树立团队大局观与集体荣誉感。`;
+        evaluation = `过程性评价（占比50%）：学练参与度、同伴协同互评、自重体能打卡；\n终结性评价（占比50%）：结构化技能组合量化考核（30%）+ 小场地教学对抗赛实战表现与体育品德（20%）。`;
+    } else if (level === '水平四') {
+        concept = `【大概念引领与初中学情定位】紧扣新课标水平四（初中7-9年级）“结构化技战术系统与正式比赛体验”理念。以【${title}】为核心素养载体，由单一技能向完整技战术体系（传切、掩护、快攻防反）全面演进，对接中考体育专项体能储备与班级教学联赛。${desc || ''}`;
+        goals = `1. 运动能力：系统掌握【${title}】完整技术动作链与基础战术配合，能在正式对抗比赛中果断决策与稳定运用，专项体能显著提升；\n2. 健康行为：具备运动环境风险自主排查与自我保护技能，能科学调控运动负荷与间歇心率，坚持完成补偿性课课练高强度体能；\n3. 体育品德：展现坚毅果敢、百折不挠的意志品质，严格遵守竞赛规则，文明观赛参赛，胜不骄败不馁，具有高度的团队凝聚力。`;
+        evaluation = `过程性评价（占比50%）：课堂战术执行力、中考体测补偿达标进度、同伴互助积分；\n终结性评价（占比50%）：综合技能实战达标考核（30%）+ 班级教学联赛技战术表现与体育道德（20%）。`;
+    } else { // 水平五 (高中)
+        concept = `【大概念引领与高中学情定位】紧扣新课标水平五高中“专项特长发展与终身体育育人”理念。以【${title}】为专项特长深化载体，深度融合高阶竞技战术、自主裁判执法、赛事编排与科学锻炼处方，培养能够伴随一生的体育运动特长与健康生活方式。${desc || ''}`;
+        goals = `1. 运动能力：达到专项化、竞技化技术水平，熟练运用复杂攻防战术体系，掌握科学训练方法与自主执裁能力，形成稳定运动特长；\n2. 健康行为：形成终身体育锻炼习惯，能根据自身体能状况自主制定科学运动处方与疲劳恢复方案，具备良好的心理调节适应力；\n3. 体育品德：弘扬中华体育精神与奥林匹克道德风尚，在激烈对抗中展现领袖担当与规则操守，积极传递健康向上的体育正能量。`;
+        evaluation = `过程性评价（占比50%）：专项竞技战术参与度、自主执裁与赛事组织能力、终身体育处方执行；\n终结性评价（占比50%）：高阶专项技术达标考评（30%）+ 全场竞技联赛综合表现与体育道德风尚（20%）。`;
+    }
+
+    return {
+        unit_title: title,
+        grade,
+        level,
+        total_hours: h,
+        concept,
+        goals,
+        evaluation,
+        lessons,
+        savedAt: new Date().toLocaleString()
+    };
+}
+
+// ----------------- 内置新课标专家课时教案生成器 (水平一到水平五深度分化) -----------------
+
+
+// ----------------- 在线 AI 接口调用 (带平滑 Fallback) -----------------
+async function callOnlineAiChat(promptText, systemPrompt) {
+    const cfg = getLessonAiConfig();
+    const provider = cfg.provider;
+    if (provider === 'builtin') {
+        throw new Error('当前为内置免密引擎');
+    }
+
+    let baseUrl = cfg.baseUrl;
+    let apiKey = cfg.apiKey;
+    let modelName = cfg.modelName;
+
+    if (!apiKey && provider !== 'ollama') {
+        throw new Error('未配置 API Key，已自动为您启用内置专家免密引擎！');
+    }
+
+    let url = baseUrl.replace(/\/+$/, '') + '/chat/completions';
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey || 'dummy'}`
+        },
+        body: JSON.stringify({
+            model: modelName,
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: promptText }
+            ],
+            temperature: 0.3
+        })
+    });
+
+    if (!res.ok) {
+        const errTxt = await res.text();
+        throw new Error(`API 接口返回错误 (${res.status}): ${errTxt.slice(0, 120)}`);
+    }
+
+    const data = await res.json();
+    return data.choices[0].message.content;
+}
+
+// ----------------- 执行生成课时教案 -----------------
+async function executeGenerateLessonPlan() {
+    const teacher = document.getElementById('lessonTeacherName').value.trim() || '体育教师';
+    const time = document.getElementById('lessonTeachTime').value.trim() || '2026年秋季';
+    const topic = document.getElementById('lessonTopicName').value.trim();
+    const seq = document.getElementById('lessonSeq').value.trim() || '第 1 次课';
+    const stage = document.getElementById('lessonStage').value;
+    const grade = document.getElementById('lessonClassGrade').value.trim() || '八年级 1 班';
+    const count = document.getElementById('lessonStudentCount').value.trim() || '40 人';
+    const duration = parseInt(document.getElementById('lessonDuration').value, 10) || 40;
+    const equip = document.getElementById('lessonVenueEquip').value.trim() || '标准场地、专项器材';
+    const req = document.getElementById('lessonSpecialReq').value.trim();
+
+    if (!topic) {
+        alert('请输入课题名称！');
+        return;
+    }
+
+    const cfg = getLessonAiConfig();
+    let planData = null;
+
+    showToast('🚀 正在依据德阳市详案标准智能生成中...');
+
+    if (cfg.provider === 'builtin') {
+        // 内置专家知识库秒出
+        planData = generateExpertLessonPlan({ topic, teacher, time, seq, stage, grade, count, duration, equip, req });
+    } else {
+        // 在线 AI 生成并带自动容错回退
+        const sysPrompt = `你是一名精通《义务教育体育与健康课程标准（2022年版）》的国家级资深体育特级教研员。请为中小学体育教师撰写德阳市标准课时计划详案，输出合法 JSON 对象（包含 motor_ability, health_behavior, sports_morality, teaching_content, key_difficult_points, safety_assurance, venue_and_equipment, prep_content, prep_methods, prep_org, prep_time, prep_intensity, base_content, base_methods, base_org, base_time, base_intensity, avg_heart_rate, group_density, individual_density, homework）。要求练习具体量化、教学生动。`;
+        const userPrompt = `教师：${teacher}，时间：${time}，课题：${topic}，课次：${seq}，课型阶段：${stage}，班级：${grade}，人数：${count}，时长：${duration}分钟，器材：${equip}，说明：${req}`;
+
+        try {
+            const rawContent = await callOnlineAiChat(userPrompt, sysPrompt);
+            const m = rawContent.match(/\{[\s\S]*\}/);
+            if (m) {
+                planData = JSON.parse(m[0]);
+                planData.teacher_name = teacher;
+                planData.teach_time = time;
+                planData.topic_name = topic;
+                planData.lesson_seq = seq;
+                planData.class_grade = grade;
+                planData.student_count = count;
+                planData.duration_num = duration;
+                planData.venue_and_equipment = equip;
+                planData.end_content = "1、放松\\n2、师生总结\\n3、布置课后练习作业\\n4、回收器材\\n5、师生再见";
+                planData.end_methods = "1、教师带领学生放松\\n2、引导学生总结\\n3、布置课后练习\\n4、组织学生回收器材\\n下课";
+                planData.end_org = "  •   •   •   •   •   •   •\\n  •   •   •   •   •   •   •\\n  •   •   •   •   •   •   •\\n  •   •   •   •   •   •   •\\n            ▲";
+                planData.end_time = "5";
+                planData.end_intensity = "小";
+                planData.savedAt = new Date().toLocaleString();
+            } else {
+                throw new Error('模型输出格式无法解析');
+            }
+        } catch (e) {
+            console.warn('在线 API 异常，平滑切换为内置新课标专家引擎：', e.message);
+            showToast('💡 在线接口未连通或未配Key，已自动切换为【内置专家免密引擎】极速出案！');
+            planData = generateExpertLessonPlan({ topic, teacher, time, seq, stage, grade, count, duration, equip, req });
+        }
+    }
+
+    currentActiveLessonPlan = planData;
+
+    // 持久化保存至档案库 (去重)
+    const st = getLessonStorage();
+    st.lessons = st.lessons.filter(l => l.topic_name !== planData.topic_name || l.lesson_seq !== planData.lesson_seq);
+    st.lessons.unshift(planData);
+    saveLessonStorage(st);
+
+    displayLessonPlanResult(planData);
+    showToast(`🎉 《${topic}》课时教案生成成功并已存入档案库！`);
+}
+
+// 页面中渲染展示课时教案
+function displayLessonPlanResult(d) {
+    const area = document.getElementById('lessonPlanResultArea');
+    const wrap = document.getElementById('lessonPlanTableWrapper');
+    if (!area || !wrap) return;
+
+    const chartUrl = generateHeartRateDataUrl(parseInt(d.duration_num || 40, 10));
+    wrap.innerHTML = renderDeyangLessonTableHtml(d, chartUrl);
+    area.style.display = 'block';
+
+    // 自动平滑滚动至结果区
+    area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ----------------- 执行生成大单元计划 -----------------
+async function executeGenerateUnitPlan() {
+    const title = document.getElementById('unitProjectTitle').value.trim();
+    const grade = document.getElementById('unitGradeSelect').value;
+    const hours = parseInt(document.getElementById('unitTotalHours').value, 10) || 6;
+    const desc = document.getElementById('unitConceptReq').value.trim();
+
+    if (!title) {
+        alert('请输入大单元项目主题！');
+        return;
+    }
+
+    showToast('🚀 正在构建大单元学练赛评体系并规划课时...');
+
+    const cfg = getLessonAiConfig();
+    let unitData = null;
+
+    if (cfg.provider === 'builtin') {
+        unitData = generateExpertUnitPlan({ title, grade, hours, desc });
+    } else {
+        const sysPrompt = `你是一名精通《义务教育体育与健康课程标准（2022年版）》的国家级资深体育特级教研员。请为以下课题生成结构化大单元教学计划 JSON 对象（包含 unit_title, grade, total_hours, concept, goals, evaluation, lessons 数组[seq, content, key_point, methods, literacy]）。课次进阶清晰。`;
+        const userPrompt = `大单元项目：${title}，学段年级：${grade}，总课时数：${hours}，要求：${desc}`;
+
+        try {
+            const rawContent = await callOnlineAiChat(userPrompt, sysPrompt);
+            const m = rawContent.match(/\{[\s\S]*\}/);
+            if (m) {
+                unitData = JSON.parse(m[0]);
+                unitData.savedAt = new Date().toLocaleString();
+            } else {
+                throw new Error('解析大单元格式失败');
+            }
+        } catch (e) {
+            console.warn('在线 API 异常，自动切换为内置专家免密引擎：', e.message);
+            showToast('💡 在线接口未连通或未配Key，已自动切换为【内置专家免密引擎】极速规划！');
+            unitData = generateExpertUnitPlan({ title, grade, hours, desc });
+        }
+    }
+
+    currentActiveUnitPlan = unitData;
+
+    // 持久化保存
+    const st = getLessonStorage();
+    st.units = st.units.filter(u => u.unit_title !== unitData.unit_title);
+    st.units.unshift(unitData);
+    saveLessonStorage(st);
+
+    displayUnitPlanResult(unitData);
+    refreshLessonUnitLinkBar();
+    showToast(`🎉 《${title}》大单元计划生成成功！已包含 ${unitData.lessons.length} 课时推进安排。`);
+}
+
+// 页面中渲染展示大单元计划
+function displayUnitPlanResult(u) {
+    const area = document.getElementById('unitPlanResultArea');
+    if (!area) return;
+
+    document.getElementById('unitResultTitle').innerText = `《${u.unit_title}》大单元教学推进总览 (${u.grade} / 共 ${u.total_hours} 课时)`;
+    document.getElementById('unitResultConcept').innerText = u.concept;
+    document.getElementById('unitResultGoals').innerText = u.goals;
+    document.getElementById('unitResultEvaluation').innerText = u.evaluation;
+
+    const grid = document.getElementById('unitLessonsGrid');
+    const lessons = u.lessons || [];
+
+    grid.innerHTML = lessons.map((l, i) => `
+        <div style="background:#fff; border:1px solid #E2E8F0; border-radius:10px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.03); display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+                <div style="font-size:13px; font-weight:800; color:#1D4ED8; margin-bottom:4px;">${l.seq}</div>
+                <div style="font-size:13px; font-weight:bold; color:#1F2937; margin-bottom:4px;">${l.content}</div>
+                <div style="font-size:11px; color:#D97706; margin-bottom:4px;"><b>难点：</b>${l.key_point}</div>
+                <div style="font-size:11px; color:#4B5563; margin-bottom:6px;"><b>策略：</b>${l.methods}</div>
+            </div>
+            <button class="btn-blue" style="font-size:11px; padding:4px 8px; margin-top:6px; background:#0284C7; border-radius:6px;" onclick="loadUnitLessonIntoPlan(${i})">
+                🔗 导入并备此课时教案
+            </button>
+        </div>
+    `).join('');
+
+    area.style.display = 'block';
+    area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// 从大单元卡片一键带入课时备课
+function loadUnitLessonIntoPlan(idx) {
+    if (!currentActiveUnitPlan || !currentActiveUnitPlan.lessons || !currentActiveUnitPlan.lessons[idx]) return;
+    const u = currentActiveUnitPlan;
+    const l = u.lessons[idx];
+    const level = u.level || detectLevel(u.grade);
+    const sport = detectSportDetail(u.unit_title + ' ' + l.content);
+
+    document.getElementById('lessonTopicName').value = `${u.unit_title}：${l.content}`;
+    document.getElementById('lessonSeq').value = `${l.seq} / 共 ${u.total_hours} 课时`;
+    document.getElementById('lessonClassGrade').value = u.grade || '八年级 1 班';
+    const lvlSel = document.getElementById('lessonLevelSelect');
+    if (lvlSel) lvlSel.value = level;
+    document.getElementById('lessonDuration').value = (level === '水平五') ? '45' : '40';
+
+    const equipInp = document.getElementById('lessonVenueEquip');
+    if (equipInp) {
+        equipInp.value = getSmartVenueAndEquipment(sport, level);
+    }
+
+    document.getElementById('lessonSpecialReq').value = `本课为大单元${l.seq} (${level})。重难点聚焦：${l.key_point}。教学策略：${l.methods}。严格安排学练赛评与专项体能课课练。`;
+    switchLessonSubTab('plan');
+    showToast(`🔗 已将大单元【${l.seq}】参数与专项器材联动载入课时备课！`);
+}
+
 </script>
 </body>
 </html>
